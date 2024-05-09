@@ -1,4 +1,4 @@
-# — IOzide ———————
+# — IOzide [ALPHA] ———————
 A programming language made with C#.
 
 ## Features

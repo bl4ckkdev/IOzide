@@ -12,7 +12,7 @@ namespace LangTest
         public static void Main(string[] args)
         {
             Console.Write(
-                "— IOzide (AIO) ———————————————————————————\n\n" +
+                "— IOzide ALPHA (AIO) ———————————————————————————\n\n" +
                 "Enter Repl: [1]\n" +
                 $"Run Script: [2]\n" +
                 $"Exit [3]\n\n> "
@@ -98,7 +98,8 @@ namespace LangTest
             Parser parser = new Parser();
             Environment env = Environment.CreateGlobalEnvironment();
             
-            Console.WriteLine("— Repl ———————————————————————————");
+            Console.WriteLine("— IOzide Repl ———————————————————————————");
+            Console.WriteLine("Type \"exit\" to exit.");
             while (true)
             {
                 Console.Write("\n> "); string input = Console.ReadLine();
