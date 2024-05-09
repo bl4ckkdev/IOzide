@@ -6,6 +6,8 @@ namespace LangTest
 {
     public class Lexer
     {
+        public static int line, col;
+        
         public class Token
         {
             public string Value { get; set; }
@@ -114,6 +116,7 @@ namespace LangTest
                     source.RemoveAt(0);
                     while (source.Count > 0 && source[0] != "\n")
                     {
+                        col++;
                         source.RemoveAt(0);
                     }
                     
@@ -127,9 +130,10 @@ namespace LangTest
                         while (source.Count > 0 && IsInteger(source[0]))
                         {
                             number += source[0];
+                            col++;
                             source.RemoveAt(0);
                         }
-                        
+                        col--;
                         tokens.Add(CreateToken(number, TokenType.Number));
                     } 
                     else if (IsAlphabetic(source[0]))
@@ -141,9 +145,10 @@ namespace LangTest
                         {
                             identifier += source[0];
                             source.RemoveAt(0);
+                            col++;
                             if (source.Count > 0) current = source[0];
                         }
-                        
+                        col--;
                         if (!Keywords.ContainsKey(identifier)) tokens.Add(CreateToken(identifier, TokenType.Identifier));
                         else
                         {
@@ -153,11 +158,15 @@ namespace LangTest
                         }
                     }
                     else if (IsSkippable(source[0]))
+                    {
+                        if (source[0] == "\n") line++;
                         source.RemoveAt(0);
-                    else throw new Exception($"Unrecognized Character: ${source[0]}");
+                    }
+                    else throw new Exception($"Unrecognized Character: ${source[0]} at line {line} col {col}");
                 }
+                col++;
             }
-
+            
             tokens.Add(CreateToken("EndOfFile", TokenType.EOF));
             return tokens;
         }

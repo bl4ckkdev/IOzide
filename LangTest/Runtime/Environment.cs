@@ -39,7 +39,7 @@ public class Environment
 
     public static Values.RuntimeValue Print(List<Values.RuntimeValue> args, Environment env)
     {
-        Console.WriteLine(Program.PrettyPrint(args[0].Value));
+        Console.WriteLine(args[0].Value);
         return Values.Null();
     }
     

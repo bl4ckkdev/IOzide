@@ -8,12 +8,14 @@ namespace LangTest
     {
         private List<Lexer.Token> Tokens = new List<Lexer.Token>();
 
+        public int col;
         private bool NotEOF() => Tokens[0].Type != Lexer.TokenType.EOF;
 
         private Lexer.Token At() => Tokens[0];
         private Lexer.Token Eat()
         {
             Lexer.Token token = At();
+            col += token.Value.Length;
             Tokens.RemoveAt(0);
             return token;
         }
@@ -23,7 +25,7 @@ namespace LangTest
             Lexer.Token token = Eat();
 
             if (token == null || token.Type != type) 
-                throw new Exception($"{error}\nExpects {type} at {At().Value} with {Tokens.Count}");
+                throw new Exception($"{error}\nExpects {type} at {At().Value} at column {col}");
 
             return token;
         }
@@ -207,9 +209,6 @@ namespace LangTest
                 Kind = AST.NodeType.ObjectLiteral,
                 Properties = properties
             };
-
-            Console.WriteLine(Program.PrettyPrint(a));
-           
             
             return a;
         }

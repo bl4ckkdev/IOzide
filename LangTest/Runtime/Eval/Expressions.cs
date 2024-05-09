@@ -60,7 +60,7 @@ public class Expressions
      public static Values.RuntimeValue EvaluateAssignment(AST.AssignmentExpression node, Environment environment)
      {
          if (node.Assignee.Kind != AST.NodeType.Identifier)
-             throw new Exception($"Invalid left side inside assignment expression. {Program.PrettyPrint(node.Assignee)}");
+             throw new Exception($"Invalid left side inside assignment expression.");
          
          string name = (node.Assignee as AST.Identifier).Symbol;
          return environment.AssignVariable(name, Interpreter.Evaluate(node.Value, environment));
@@ -119,6 +119,6 @@ public class Expressions
              return result;
          }
          
-         throw new Exception("Invalid Function: " + Program.PrettyPrint(fn));
+         throw new Exception("Invalid Function.");
      }
 }

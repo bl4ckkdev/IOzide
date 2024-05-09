@@ -1,7 +1,5 @@
 ﻿using LangTest.Runtime;
 using System;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Environment = LangTest.Runtime.Environment;
 using System.Runtime.InteropServices;
 
@@ -11,6 +9,7 @@ namespace LangTest
     {
         public static void Main(string[] args)
         {
+            // TODO: Add to PATH and run argument
             Console.Write(
                 "— IOzide ALPHA (AIO) ———————————————————————————\n\n" +
                 "Enter Repl: [1]\n" +
@@ -28,6 +27,11 @@ namespace LangTest
                 Console.WriteLine("Invalid command, exiting..");
                 System.Environment.Exit(1);
             }
+            
+            Console.Write("\nPress anything to exit.. ");
+            Console.ReadLine();
+            
+            System.Environment.Exit(0);
         }
 
         public static readonly string File = @"./Tests/test.io";
@@ -43,7 +47,6 @@ namespace LangTest
             
             AST.Program program = parser.ProduceAST(input);
             var result = Interpreter.Evaluate(program, env);
-            System.Environment.Exit(1);
         }
         
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
@@ -109,13 +112,6 @@ namespace LangTest
                 
                 var result = Interpreter.Evaluate(program, env);
             }
-        }
-
-        public static string PrettyPrint(object obj)
-        {
-            return JsonConvert.SerializeObject(
-                obj, Formatting.Indented,
-                new JsonConverter[] {new StringEnumConverter()});
         }
     }
 }
