@@ -34,4 +34,4 @@ ___
 > 
 > Compared to the guide, my current version of the language follows all C# norms & has comments for now. In the very near future, it's going to have strings, a lot more native functions and a compiler for executables.
 
-[logo]: icons/iozide_full.png "Logo Title Text 2"
+[logo]: Icons/iozide_full.png "IOzide"
