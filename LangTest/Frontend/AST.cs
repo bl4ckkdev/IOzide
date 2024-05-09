@@ -1,0 +1,111 @@
+using System.Collections.Generic;
+#nullable enable
+namespace LangTest
+{
+    public class AST
+    {
+        public enum NodeType
+        {
+            Program,
+            VariableDeclaration,
+            
+            AssignmentExpression,
+            MemberExpression,
+            CallExpression,
+            UnaryExpression,
+            FunctionDeclaration,
+            
+            NumericLiteral,
+            Identifier,
+            BinaryExpr,
+            Property,
+            ObjectLiteral,
+        }
+        public class Statement 
+        {
+            public NodeType Kind { get; set; }
+        }
+
+        public class Program : Statement
+        {
+            public List<Statement> Body;
+            
+            public Program() 
+            {
+                Kind = NodeType.Program;
+            }
+        }
+        
+        public class VariableDeclaration : Statement
+        {
+            public bool Constant;
+            public string Ident;
+            public Expression? Value;
+            
+            public VariableDeclaration() 
+            {
+                Kind = NodeType.VariableDeclaration;
+            }
+        }
+
+        public class Expression : Statement
+        {
+        }
+
+        public class AssignmentExpression : Expression
+        {
+            public Expression Assignee, Value;
+
+            public AssignmentExpression()
+            {
+                Kind = NodeType.AssignmentExpression;
+            }
+        }
+        
+        public class BinaryExpression : Expression
+        {
+            public BinaryExpression() { Kind = NodeType.BinaryExpr; }
+            public Expression Left, Right;
+            public string Operator;
+        }
+        
+        public class CallExpression : Expression
+        {
+            public CallExpression() { Kind = NodeType.CallExpression; }
+            public List<Expression> Arguments;
+            public Expression Caller;
+        }
+        
+        public class MemberExpression : Expression
+        {
+            public MemberExpression() { Kind = NodeType.MemberExpression; }
+            public List<Expression> Arguments;
+            public Expression Property, Object;
+            public bool Computed;
+        }
+
+        public class Identifier : Expression
+        {
+            public Identifier() { Kind = NodeType.Identifier; }
+            public string Symbol;
+        }
+
+        public class NumericLiteral : Expression
+        {
+            public NumericLiteral() { Kind = NodeType.NumericLiteral; }
+            public float Value;
+        }
+        public class Property : Expression
+        {
+            public Property() { Kind = NodeType.Property; }
+            public string Key;
+            public Expression? Value;
+        }
+        
+        public class ObjectLiteral : Expression
+        {
+            public ObjectLiteral() { Kind = NodeType.ObjectLiteral; }
+            public List<Property> Properties;
+        }
+    }
+}
