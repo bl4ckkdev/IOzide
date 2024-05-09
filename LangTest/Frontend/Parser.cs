@@ -51,7 +51,8 @@ namespace LangTest
             {
                 case Lexer.TokenType.Let or Lexer.TokenType.Const:
                     return ParseVariableDeclaration();
-                        
+                case Lexer.TokenType.Function:
+                    return ParseFunctionDeclaration();
                 default:
                     return ParseExpression();
             }
@@ -90,6 +91,43 @@ namespace LangTest
 
             return declaration;
         }
+
+        public AST.Statement ParseFunctionDeclaration()
+        {
+            Eat();
+
+            Lexer.Token name = Expect(Lexer.TokenType.Identifier, "Expected function name following fn keyword.");
+
+            var args = ParseArguments();
+            var parameters = new List<string>();
+
+            foreach (AST.Expression argument in args)
+            {
+                if (argument.Kind != AST.NodeType.Identifier)
+                    throw new Exception("Inside function declaration expected parameters to be of type string");
+                parameters.Add((argument as AST.Identifier).Symbol);
+            }
+
+            Expect(Lexer.TokenType.OpenBrace, "Expected opening brace after function declaration.");
+
+            var body = new List<AST.Statement>();
+            while (At().Type != Lexer.TokenType.EOF && At().Type != Lexer.TokenType.CloseBrace)
+            {
+                body.Add(ParseStatement());
+            }
+
+            Expect(Lexer.TokenType.CloseBrace, "Closing brace expected inside function declaration.");
+
+            AST.FunctionDeclaration function = new AST.FunctionDeclaration()
+            {
+                Body = body,
+                Name = name.Value,
+                parameters = parameters,
+                Kind = AST.NodeType.FunctionDeclaration
+            };
+
+            return function;
+        }
         
         private AST.Expression ParseExpression()
         {
@@ -98,6 +136,7 @@ namespace LangTest
 
         private AST.Expression ParseAssignmentExpression()
         {
+            
             var left = ParseObjectExpression();
             if (At().Type == Lexer.TokenType.Equals)
             {

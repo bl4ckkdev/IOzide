@@ -11,37 +11,43 @@ namespace LangTest.Runtime
             Number,
             Boolean,
             Object,
-            NativeFunction
+            NativeFunction,
+            Function
         }
 
         public class RuntimeValue
-        { 
+        {
+            public object Value = null;
             public ValueType Type;
         }
         
         public class NullValue : RuntimeValue
         {
-            public string Value = null;
-
-            public NullValue() => Type = ValueType.Null;
+            public NullValue()
+            {
+                Value = null;
+                Type = ValueType.Null;
+            }
         }
 
         public class BooleanValue : RuntimeValue
         {
             public ValueType Type;
-            public bool Value ;
 
             public BooleanValue()
             {
+                Value = false;
                 Type = ValueType.Boolean;
             }
         }
         
         public class NumberValue : RuntimeValue
         {
-            public float Value;
-
-            public NumberValue() => Type = ValueType.Number;
+            public NumberValue()
+            {
+                Value = (double)0;
+                Type = ValueType.Number;
+            }
         }
         
         public class ObjectValue : RuntimeValue
@@ -51,7 +57,7 @@ namespace LangTest.Runtime
             public ObjectValue() => Type = ValueType.Object;
         }
 
-        public static NumberValue Number(float n = 0) => new NumberValue
+        public static NumberValue Number(double n = 0) => new NumberValue
         {
             Type = ValueType.Number,
             Value = n
@@ -64,7 +70,7 @@ namespace LangTest.Runtime
             Value = null,
         };
         
-        public static BooleanValue Boolean(bool b = true) => new BooleanValue
+        public static BooleanValue Boolean(bool b = false) => new BooleanValue
         {
             Type = ValueType.Null,
             Value = b,
@@ -72,10 +78,6 @@ namespace LangTest.Runtime
 
         
         public delegate RuntimeValue FunctionCall(List<RuntimeValue> args, Environment env);
-        public static RuntimeValue MyFunction(List<RuntimeValue> args, Environment env)
-        {
-            return new RuntimeValue();
-        }
         
         public class NativeFunctionValue : RuntimeValue
         {
@@ -93,6 +95,19 @@ namespace LangTest.Runtime
                 Type = ValueType.NativeFunction,
                 Call = call
             };
+        }
+        
+        public class FunctionValue : RuntimeValue
+        {
+            public string Name;
+            public List<string> Parameters;
+            public Environment DeclarationEnvironment;
+            public List<AST.Statement> Body;
+            
+            public FunctionValue()
+            {
+                Type = ValueType.Function;
+            }
         }
     }
 }

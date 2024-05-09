@@ -19,4 +19,18 @@ public class Statements
         var value = declaration.Value != null ? Interpreter.Evaluate(declaration.Value, environment) : Values.Null();
         return environment.DeclareVariable(declaration.Ident, value, declaration.Constant);
     }
+    
+    public static Values.RuntimeValue EvaluateFunctionDeclaration(AST.FunctionDeclaration declaration, Environment environment)
+    {
+        Values.FunctionValue function = new Values.FunctionValue
+        {
+            Type = Values.ValueType.Function,
+            Name = declaration.Name,
+            Parameters = declaration.parameters,
+            DeclarationEnvironment = environment,
+            Body = declaration.Body
+        };
+
+        return environment.DeclareVariable(declaration.Name, function, true);
+    }
 }

@@ -8,12 +8,13 @@ namespace LangTest
         {
             Program,
             VariableDeclaration,
+            FunctionDeclaration,
             
             AssignmentExpression,
             MemberExpression,
             CallExpression,
             UnaryExpression,
-            FunctionDeclaration,
+            
             
             NumericLiteral,
             Identifier,
@@ -45,6 +46,19 @@ namespace LangTest
             public VariableDeclaration() 
             {
                 Kind = NodeType.VariableDeclaration;
+            }
+        }
+        
+        public class FunctionDeclaration : Statement
+        {
+            public List<string> parameters;
+            public string Name;
+            public List<Statement> Body;
+            
+            public FunctionDeclaration()
+            {
+                parameters = new List<string>();
+                Kind = NodeType.FunctionDeclaration;
             }
         }
 

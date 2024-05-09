@@ -1,3 +1,4 @@
+using LangTest.Runtime.Eval;
 using System;
 using System.Collections.Generic;
 
@@ -30,19 +31,31 @@ public class Environment
             Value = true
         }, true);
 
-        env.DeclareVariable("print", Values.NativeFunction((fn, en) =>
-        {
-            Console.WriteLine(Program.PrettyPrint(fn));
-            return Values.Null();
-        }, env), true);
+        env.DeclareVariable("print", Values.NativeFunction(Print, env), true);
+        env.DeclareVariable("time", Values.NativeFunction(Time, env), true);
         
         return env;
     }
 
+    public static Values.RuntimeValue Print(List<Values.RuntimeValue> args, Environment env)
+    {
+        Console.WriteLine(Program.PrettyPrint(args[0].Value));
+        return Values.Null();
+    }
+    
+    public static Values.RuntimeValue Time(List<Values.RuntimeValue> args, Environment env)
+    {
+        return new Values.NumberValue
+        {
+            Value = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+            Type = Values.ValueType.Number
+        };
+    }
+
     private Environment? Parent;
-    private Dictionary<string, Values.RuntimeValue> Variables 
+    public Dictionary<string, Values.RuntimeValue> Variables 
         = new Dictionary<string, Values.RuntimeValue>();
-    private List<string> Constants = new List<string>();
+    public List<string> Constants = new List<string>();
     public bool Global;
     
     public Values.RuntimeValue DeclareVariable(string name, Values.RuntimeValue value, bool constant)

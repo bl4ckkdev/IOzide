@@ -28,6 +28,8 @@ namespace LangTest.Runtime
                     return Statements.EvaluateProgram(ASTNode as AST.Program, environment);
                 case AST.NodeType.VariableDeclaration:
                     return Statements.EvaluateVariableDeclaration(ASTNode as AST.VariableDeclaration, environment);
+                case AST.NodeType.FunctionDeclaration:
+                    return Statements.EvaluateFunctionDeclaration(ASTNode as AST.FunctionDeclaration, environment);
                 default:
                     throw new NotImplementedException($"This node has not been implemented. {ASTNode.Kind}");
             }

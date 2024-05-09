@@ -31,6 +31,7 @@ namespace LangTest
             BinaryOperator,
             Let,
             Const,
+            Function,
             EOF,
         }
 
@@ -38,6 +39,7 @@ namespace LangTest
         {
             {"let", TokenType.Let},
             {"const", TokenType.Const},
+            {"fn", TokenType.Function},
         };
         
         public static List<Token> Tokenize(string code)
@@ -107,6 +109,15 @@ namespace LangTest
                     tokens.Add(CreateToken(source[0], TokenType.Dot));
                     source.RemoveAt(0);
                 }
+                else if (source[0] == "~")
+                {
+                    source.RemoveAt(0);
+                    while (source.Count > 0 && source[0] != "\n")
+                    {
+                        source.RemoveAt(0);
+                    }
+                    
+                }
                 else
                 {
                     if (IsInteger(source[0]))
@@ -138,6 +149,7 @@ namespace LangTest
                         {
                             if (identifier == "let") tokens.Add(CreateToken(identifier, TokenType.Let));
                             if (identifier == "const") tokens.Add(CreateToken(identifier, TokenType.Const));
+                            if (identifier == "fn") tokens.Add(CreateToken(identifier, TokenType.Function));
                         }
                     }
                     else if (IsSkippable(source[0]))

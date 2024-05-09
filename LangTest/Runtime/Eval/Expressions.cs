@@ -10,24 +10,24 @@ public class Expressions
 {
      public static Values.NumberValue EvaluateNumericBinaryExpression(Values.NumberValue left, Values.NumberValue right, string op)
      {
-         float result = 0;
-    
+         double result = 0;
+         
          switch (op)
          {
              case "+":
-                 result = left.Value + right.Value;
+                 result = Convert.ToDouble(left.Value) + Convert.ToDouble(right.Value);
                  break;
              case "-":
-                 result = left.Value - right.Value;
+                 result = Convert.ToDouble(left.Value) - Convert.ToDouble(right.Value);
                  break;
              case "*":
-                 result = left.Value * right.Value;
+                 result = Convert.ToDouble(left.Value) * Convert.ToDouble(right.Value);
                  break;
              case "/":
-                 result = left.Value / right.Value;
+                 result = Convert.ToDouble(left.Value) / Convert.ToDouble(right.Value);
                  break;
              case "%":
-                 result = left.Value % right.Value;
+                 result = Convert.ToDouble(left.Value) % Convert.ToDouble(right.Value);
                  break;
          }
     
@@ -42,7 +42,7 @@ public class Expressions
      {
          Values.RuntimeValue left = Interpreter.Evaluate(binop.Left, environment);
          Values.RuntimeValue right = Interpreter.Evaluate(binop.Right, environment);
-    
+
          if (left.Type == Values.ValueType.Number && right.Type == Values.ValueType.Number)
          {
              return EvaluateNumericBinaryExpression(left as Values.NumberValue, right as Values.NumberValue, binop.Operator);
@@ -87,14 +87,38 @@ public class Expressions
      
      public static Values.RuntimeValue EvaluateCallExpression(AST.CallExpression expression, Environment environment)
      {
+         
          var args = expression.Arguments.Select((arg) => Interpreter.Evaluate(arg, environment)).ToList();
          Values.RuntimeValue fn = Interpreter.Evaluate(expression.Caller, environment);
 
-         Values.NativeFunctionValue callable = (fn as Values.NativeFunctionValue).Call(args, environment) as Values.NativeFunctionValue;
+         if (fn.Type == Values.ValueType.NativeFunction)
+         {
+             var res = (fn as Values.NativeFunctionValue).Call(args, environment);
+             return res;
+         } 
+         if (fn.Type == Values.ValueType.Function)
+         {
+             var function = fn as Values.FunctionValue;
+             Environment scope = new Environment(function.DeclarationEnvironment);
 
-         if (fn.Type != Values.ValueType.NativeFunction)
-             throw new Exception("Invalid Function: " + Program.PrettyPrint(fn));
+             for (int i = 0; i < function.Parameters.Count; i++)
+             {
+                 // TODO: Check the bounds
+                 string name = function.Parameters[i];
+                 scope.DeclareVariable(name, args[i], false);
+             }
+
+             Values.RuntimeValue result = Values.Null();
+             
+             // Evaluates the function body, line by line
+             foreach (var statement in function.Body)
+             {
+                 result = Interpreter.Evaluate(statement, scope);
+             }
+
+             return result;
+         }
          
-         return Values.Null();
+         throw new Exception("Invalid Function: " + Program.PrettyPrint(fn));
      }
 }
