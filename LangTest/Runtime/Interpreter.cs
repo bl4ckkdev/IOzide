@@ -18,6 +18,8 @@ namespace LangTest.Runtime
                     return Expressions.EvaluateIdentifier(ASTNode as AST.Identifier, environment);
                 case AST.NodeType.ObjectLiteral:
                     return Expressions.EvaluateObjectExpression(ASTNode as AST.ObjectLiteral, environment);
+                case AST.NodeType.CallExpression:
+                    return Expressions.EvaluateCallExpression(ASTNode as AST.CallExpression, environment);
                 case AST.NodeType.BinaryExpr:
                     return Expressions.EvaluateBinaryExpression(ASTNode as AST.BinaryExpression, environment);
                 case AST.NodeType.AssignmentExpression:

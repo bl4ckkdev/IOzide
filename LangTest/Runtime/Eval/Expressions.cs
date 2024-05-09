@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LangTest.Runtime.Eval;
 
@@ -82,5 +83,18 @@ public class Expressions
          }
          
          return obj;
+     }
+     
+     public static Values.RuntimeValue EvaluateCallExpression(AST.CallExpression expression, Environment environment)
+     {
+         var args = expression.Arguments.Select((arg) => Interpreter.Evaluate(arg, environment)).ToList();
+         Values.RuntimeValue fn = Interpreter.Evaluate(expression.Caller, environment);
+
+         Values.NativeFunctionValue callable = (fn as Values.NativeFunctionValue).Call(args, environment) as Values.NativeFunctionValue;
+
+         if (fn.Type != Values.ValueType.NativeFunction)
+             throw new Exception("Invalid Function: " + Program.PrettyPrint(fn));
+         
+         return Values.Null();
      }
 }

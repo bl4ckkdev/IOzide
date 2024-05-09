@@ -30,13 +30,12 @@ public class Environment
             Value = true
         }, true);
 
-        env.DeclareVariable("print", Values.MK_NATIVE_FN((args, scope) =>
+        env.DeclareVariable("print", Values.NativeFunction((fn, en) =>
         {
-            Console.WriteLine(string.Join(" ", args));
-        }), true);
+            Console.WriteLine(Program.PrettyPrint(fn));
+            return Values.Null();
+        }, env), true);
         
-        var printFunction = (Func<List<Values.RuntimeValue>, Environment, Values.RuntimeValue>)env.GetVar("print");
-        printFunction(new List<Values.RuntimeValue>(), env);
         return env;
     }
 

@@ -70,11 +70,13 @@ namespace LangTest.Runtime
             Value = b,
         };
 
-        public struct FunctionCall
+        
+        public delegate RuntimeValue FunctionCall(List<RuntimeValue> args, Environment env);
+        public static RuntimeValue MyFunction(List<RuntimeValue> args, Environment env)
         {
-            public List<RuntimeValue> Arguments;
-            public Environment Environment;
+            return new RuntimeValue();
         }
+        
         public class NativeFunctionValue : RuntimeValue
         {
             public FunctionCall Call;
@@ -84,16 +86,12 @@ namespace LangTest.Runtime
             }
         }
         
-
-        public static NativeFunctionValue NativeFunction(Action<FunctionCall> nativeFunction)
+        public static NativeFunctionValue NativeFunction(FunctionCall call, Environment env)
         {
             return new NativeFunctionValue
             {
-                Call = new FunctionCall
-                {
-                    Arguments = new List<Values.RuntimeValue>(),
-                    Environment = new Environment(null) // You might need to provide the actual environment here
-                },
+                Type = ValueType.NativeFunction,
+                Call = call
             };
         }
     }
