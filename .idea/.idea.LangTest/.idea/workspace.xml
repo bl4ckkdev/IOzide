@@ -8,23 +8,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a4fe12a8-6d62-42ef-bc7c-f58c8075eeb6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.LangTest/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.LangTest/.idea/indexLayout.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.LangTest/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/LangTest.sln" beforeDir="false" afterPath="$PROJECT_DIR$/IOzide.sln" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LangTest/Frontend/AST.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LangTest/Frontend/AST.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LangTest/Frontend/Lexer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LangTest/Frontend/Lexer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LangTest/Frontend/Parser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LangTest/Frontend/Parser.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LangTest/LangTest.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/LangTest/LangTest.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LangTest/Lexerv2.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LangTest/RefactoredLexer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LangTest/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LangTest/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LangTest/Runtime/Environment.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LangTest/Runtime/Environment.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LangTest/Runtime/Eval/Expressions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LangTest/Runtime/Eval/Expressions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LangTest/Runtime/Eval/Statements.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LangTest/Runtime/Eval/Statements.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LangTest/Runtime/Interpreter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LangTest/Runtime/Interpreter.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LangTest/Runtime/Values.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LangTest/Runtime/Values.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LangTest/Tests/test.io" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LangTest/LangTest.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/LangTest/IOzide.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -100,7 +84,7 @@
       <workItem from="1715189514465" duration="13127000" />
       <workItem from="1715247282218" duration="1420000" />
       <workItem from="1715259061867" duration="19568000" />
-      <workItem from="1715282890836" duration="11911000" />
+      <workItem from="1715282890836" duration="12214000" />
     </task>
     <servers />
   </component>
