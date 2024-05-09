@@ -8,6 +8,7 @@ A programming language made with C#.
 - [x] Custom functions with nesting support
 - [x] ~~Compiler~~, Interpreter & REPL
 - [x] Custom structs
+- [x] Comments 
 - [ ] Multiple file projects
 - [ ] Classes
 - [ ] Namespaces
