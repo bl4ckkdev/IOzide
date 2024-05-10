@@ -21,22 +21,22 @@ output("Hello, World!")
 ```
 > Code that uses variable & function declarations, as well as binary operations and the "print" native function.
 ```
-let a = 5;                   ~ Creates a variable with the value "5"
+let number = num(input("Enter a number: ")); ~ Creates a variable with a value provided by the user
 
-fn increment(x, amount) {    ~ Function with 2 arguments
-    x + amount               ~ Returns x + amount
+fn increment(x, amount) {                    ~ Function with 2 arguments
+    x + amount;                              ~ Returns x + amount
 }
 
-output(increment(a, 5))      ~ Prints value that function returns
+output(increment(number, 5));                ~ Prints value that function returns
 ```
 
 ## Limitations
-Currently, the language is missing crucial features such as loops while also not being stable. Semicolons especially are not well implemented currently and they don't work after function declarations.
+Currently, the language is missing crucial features such as loops while also not being stable.
 
 ___
 > ### ⚠️ Note:
 > The base of the language is made using [tylerlaceby's guide](https://www.youtube.com/playlist?list=PL_2VhOvlMk4UHGqYCLWc6GO8FaPl8fQTh), completely ported from TypeScript to C#. This language does not follow good code practices and is probably very unstable, but I learned a lot of things making it which are likely going to be used when I make my next programming language.
 > 
-> Compared to the guide, my current version of the language follows all C# norms & has comments for now. In the very near future, it's going to have strings, a lot more native functions and a compiler for executables.
+> Compared to the guide, my current version of the language follows all C# norms and has a TON more features.
 
 [logo]: Icons/iozide_full.png "IOzide"
