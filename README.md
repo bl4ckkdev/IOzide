@@ -17,7 +17,7 @@ A programming language made with C#.
 ## Examples
 > Hello world
 ```
-print("Hello, World!")
+output("Hello, World!")
 ```
 > Code that uses variable & function declarations, as well as binary operations and the "print" native function.
 ```
