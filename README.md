@@ -27,7 +27,7 @@ fn increment(x, amount) {    ~ Function with 2 arguments
     x + amount               ~ Returns x + amount
 }
 
-print(increment(a, 5))       ~ Prints value that function returns
+output(increment(a, 5))      ~ Prints value that function returns
 ```
 
 ## Limitations
