@@ -97,6 +97,7 @@ public class Expressions
      public static Values.RuntimeValue EvaluateIdentifier(AST.Identifier identifier, Environment environment)
      {
          var val = environment.LookupVariable(identifier.Symbol);
+         if (identifier.Negative && val.Type == Values.ValueType.Number) val.Value = -Convert.ToDouble(val.Value);
          return val;
      }
 

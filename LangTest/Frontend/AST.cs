@@ -102,6 +102,7 @@ namespace LangTest
         {
             public Identifier() { Kind = NodeType.Identifier; }
             public string Symbol;
+            public bool Negative;
         }
 
         public class NumericLiteral : Expression

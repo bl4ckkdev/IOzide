@@ -363,7 +363,7 @@ namespace LangTest
             switch (token)
             {
                 case Lexer.TokenType.Identifier:
-                    return new AST.Identifier { Kind = AST.NodeType.Identifier, Symbol = Eat().Value};
+                    return new AST.Identifier { Kind = AST.NodeType.Identifier, Symbol = Eat().Value, Negative = false};
                 case Lexer.TokenType.Number:
                     return new AST.NumericLiteral { Kind = AST.NodeType.NumericLiteral, Value = float.Parse(Eat().Value)};
                 case Lexer.TokenType.String:
@@ -385,6 +385,10 @@ namespace LangTest
                             {
                                 Kind = AST.NodeType.NumericLiteral, Value = t.Value == "+" ? float.Parse(Eat().Value) : -float.Parse(Eat().Value),
                             };
+                        }
+                        if (At().Type == Lexer.TokenType.Identifier)
+                        {
+                            return new AST.Identifier { Kind = AST.NodeType.Identifier, Symbol = Eat().Value, Negative = true};
                         }
                     }
                     goto default;
