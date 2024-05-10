@@ -123,13 +123,37 @@ namespace LangTest
                 else if (source[0] == "\"")
                 {
                     string str = "";
-
-                    Console.WriteLine("test");
                     
                     source.RemoveAt(0);
                     while (source[0] != "\"")
                     {
-                        str += source[0];
+                        if (source[0] == "\\" && source.Count > 1)
+                        {
+                            switch (source[1])
+                            {
+                                case "n":
+                                    str += "\n";
+                                    source.RemoveAt(0);
+                                    break;
+                                case "r":
+                                    str += "\r";
+                                    source.RemoveAt(0);
+                                    break;
+                                case "t":
+                                    str += "\t";
+                                    source.RemoveAt(0);
+                                    break;
+                                case "\\":
+                                    source.RemoveAt(0);
+                                    str += source[0];
+                                    break;
+                                default: 
+                                    source.RemoveAt(0);
+                                    str += source[0];
+                                    break;
+                            }
+                        }
+                        else str += source[0];
                         col++;
                         
                         source.RemoveAt(0);

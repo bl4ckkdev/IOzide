@@ -33,6 +33,7 @@ public class Environment
 
         env.DeclareVariable("print", Values.NativeFunction(Print, env), true);
         env.DeclareVariable("time", Values.NativeFunction(Time, env), true);
+        env.DeclareVariable("input", Values.NativeFunction(Input, env), true);
         
         return env;
     }
@@ -48,6 +49,16 @@ public class Environment
         return new Values.NumberValue
         {
             Value = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+            Type = Values.ValueType.Number
+        };
+    }
+    
+    public static Values.RuntimeValue Input(List<Values.RuntimeValue> args, Environment env)
+    {
+        Console.Write(args[0].Value.ToString());
+        return new Values.StringValue
+        {
+            Value = Console.ReadLine(),
             Type = Values.ValueType.Number
         };
     }
