@@ -14,11 +14,6 @@ A programming language made with C#.
 - [ ] Namespaces
 
 ## Examples
-> Hello world program.
-```
-print("Hello, World!")
-```
-
 > Code that uses variable & function declarations, as well as binary operations and the "print" native function.
 ```
 let a = 5;                   ~ Creates a variable with the value "5"
