@@ -12,23 +12,30 @@ public class Expressions
      {
          double result = 0;
          
+         double l = Convert.ToDouble(left.Value);
+         double r = Convert.ToDouble(right.Value);
+         
          switch (op)
          {
              case "+":
-                 result = Convert.ToDouble(left.Value) + Convert.ToDouble(right.Value);
+                 result = l + r;
                  break;
              case "-":
-                 result = Convert.ToDouble(left.Value) - Convert.ToDouble(right.Value);
+                 result = l - r;
                  break;
              case "*":
-                 result = Convert.ToDouble(left.Value) * Convert.ToDouble(right.Value);
+                 result = l * r;
                  break;
              case "/":
-                 result = Convert.ToDouble(left.Value) / Convert.ToDouble(right.Value);
+                 result = l / r;
                  break;
              case "%":
-                 result = Convert.ToDouble(left.Value) % Convert.ToDouble(right.Value);
+                 result = l % r;
                  break;
+             case "^":
+                 result = Math.Pow(l, r);
+                 break;
+                 
          }
     
          return new Values.NumberValue
@@ -123,7 +130,6 @@ public class Expressions
      
      public static Values.RuntimeValue EvaluateCallExpression(AST.CallExpression expression, Environment environment)
      {
-         
          var args = expression.Arguments.Select((arg) => Interpreter.Evaluate(arg, environment)).ToList();
          Values.RuntimeValue fn = Interpreter.Evaluate(expression.Caller, environment);
 

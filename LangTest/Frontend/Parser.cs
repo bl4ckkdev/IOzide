@@ -49,16 +49,26 @@ namespace LangTest
 
         private AST.Statement ParseStatement()
         {
+            AST.Statement ret;
+            bool needsSemicolon = false;
+
             switch (At().Type)
             {
                 case Lexer.TokenType.Let or Lexer.TokenType.Const:
-                    return ParseVariableDeclaration();
+                    ret = ParseVariableDeclaration();
+                    break;
                 case Lexer.TokenType.Function:
-                    return ParseFunctionDeclaration();
+                    ret = ParseFunctionDeclaration();
+                    break;
                 default:
-                    return ParseExpression();
+                    ret = ParseExpression();
+                    needsSemicolon = true;
+                    break;
             }
-            return ParseExpression();
+
+            if (needsSemicolon && Eat().Type != Lexer.TokenType.Semicolon)
+                throw new Exception($"Expected semicolon after Statement.");
+            return ret;
         }
 
         private AST.Statement ParseVariableDeclaration()
@@ -154,6 +164,7 @@ namespace LangTest
             
             return left;
         }
+        
         private AST.Expression ParseObjectExpression()
         {
             if (At().Type != Lexer.TokenType.OpenBrace)
@@ -238,7 +249,7 @@ namespace LangTest
         {
             AST.Expression left = ParseCallMemberExpression();
 
-            while (At().Value == "*" || At().Value == "/" || At().Value == "%")
+            while (At().Value == "*" || At().Value == "/" || At().Value == "%" || At().Value == "^")
             {
                 string op = Eat().Value;
                 AST.Expression right = ParseCallMemberExpression();
@@ -362,6 +373,21 @@ namespace LangTest
                     AST.Expression value = ParseExpression();
                     Eat();
                     return value;
+                case Lexer.TokenType.BinaryOperator:
+                    Lexer.Token t = At();
+                    if (t.Value == "+" || t.Value == "-")
+                    {
+                        Eat();
+
+                        if (At().Type == Lexer.TokenType.Number)
+                        {
+                            return new AST.NumericLiteral
+                            {
+                                Kind = AST.NodeType.NumericLiteral, Value = t.Value == "+" ? float.Parse(Eat().Value) : -float.Parse(Eat().Value),
+                            };
+                        }
+                    }
+                    goto default;
                 default: throw new Exception($"Unexpected Token: {At().Type}");
             }
         }

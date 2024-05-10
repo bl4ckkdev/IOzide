@@ -31,16 +31,23 @@ public class Environment
             Value = true
         }, true);
 
-        env.DeclareVariable("print", Values.NativeFunction(Print, env), true);
+        env.DeclareVariable("output", Values.NativeFunction(Output, env), true);
+        env.DeclareVariable("write", Values.NativeFunction(Write, env), true);
         env.DeclareVariable("time", Values.NativeFunction(Time, env), true);
         env.DeclareVariable("input", Values.NativeFunction(Input, env), true);
         
         return env;
     }
 
-    public static Values.RuntimeValue Print(List<Values.RuntimeValue> args, Environment env)
+    public static Values.RuntimeValue Output(List<Values.RuntimeValue> args, Environment env)
     {
         Console.WriteLine(args[0].Value);
+        return Values.Null();
+    }
+    
+    public static Values.RuntimeValue Write(List<Values.RuntimeValue> args, Environment env)
+    {
+        Console.Write(args[0].Value);
         return Values.Null();
     }
     

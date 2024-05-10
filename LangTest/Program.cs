@@ -1,19 +1,23 @@
 ﻿using LangTest.Runtime;
+using LangTest.Runtime.Eval;
 using System;
 using Environment = LangTest.Runtime.Environment;
 using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System.Collections.Generic;
 
 namespace LangTest
 {
     internal class Program
     {
+        public static readonly string Version = "v0.1.1";
+        
         public static void Main(string[] args)
         {
             // TODO: Add to PATH and run argument
             Console.Write(
-                "— IOzide ALPHA (AIO) ———————————————————————————\n\n" +
+                $"— IOzide {Version} ALPHA (AIO) ———————————————————————————\n\n" +
                 "Enter Repl: [1]\n" +
                 $"Run Script: [2]\n" +
                 $"Exit [3]\n\n> "
@@ -22,7 +26,7 @@ namespace LangTest
             string input = Console.ReadLine();
             
             if (input == "1") REPL();
-            else if (input == "2") RunFile();
+            else if (input == "2") RunFile(args);
             else if (input == "3") System.Environment.Exit(1);
             else
             {
@@ -36,9 +40,7 @@ namespace LangTest
             System.Environment.Exit(0);
         }
 
-        public static readonly string File = @"./Tests/test.io";
-
-        public static void RunFile()
+        public static void RunFile(string[] args)
         {
             Parser parser = new Parser();
             Environment env = Environment.CreateGlobalEnvironment();
@@ -49,6 +51,28 @@ namespace LangTest
             
             AST.Program program = parser.ProduceAST(input);
             var result = Interpreter.Evaluate(program, env);
+            
+            FindMainFunction(program, args, env);
+        }
+        
+        public static void FindMainFunction(AST.Program program, string[] args, Environment env)
+        {
+            foreach (var statement in program.Body)
+            {
+                if (statement.Kind == AST.NodeType.FunctionDeclaration)
+                {
+                    var functionDeclaration = statement as AST.FunctionDeclaration;
+                    if (functionDeclaration.Name == "Main")
+                    {
+                        Interpreter.Evaluate(new AST.Program
+                        {
+                            Body = functionDeclaration.Body,
+                            Kind = AST.NodeType.Program
+                        }, env);
+                        return;
+                    }
+                }
+            }
         }
         
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
@@ -111,7 +135,6 @@ namespace LangTest
                 if (input != null && input.ToLower() == "exit") System.Environment.Exit(1);
                 
                 AST.Program program = parser.ProduceAST(input);
-                
                 var result = Interpreter.Evaluate(program, env);
             }
         }

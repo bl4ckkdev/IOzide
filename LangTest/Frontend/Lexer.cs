@@ -81,8 +81,10 @@ namespace LangTest
                     tokens.Add(CreateToken(source[0], TokenType.CloseBracket));
                     source.RemoveAt(0);
                 }
-                else if (source[0] == "+" || source[0] == "-" || source[0] == "*" || source[0] == "/" || source[0] == "%")
+                else if (source[0] == "+" || source[0] == "-" || source[0] == "*" || source[0] == "/" || source[0] == "%" || source[0] == "^")
                 {
+                    if (source[1] == "=") continue;
+                    
                     tokens.Add(CreateToken(source[0], TokenType.BinaryOperator));
                     source.RemoveAt(0);
                 }
