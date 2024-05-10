@@ -15,8 +15,8 @@ namespace LangTest
             CallExpression,
             UnaryExpression,
             
-            
             NumericLiteral,
+            StringLiteral,
             Identifier,
             BinaryExpr,
             Property,
@@ -109,6 +109,13 @@ namespace LangTest
             public NumericLiteral() { Kind = NodeType.NumericLiteral; }
             public float Value;
         }
+        
+        public class StringLiteral : Expression
+        {
+            public StringLiteral() { Kind = NodeType.StringLiteral; }
+            public string Value;
+        }
+        
         public class Property : Expression
         {
             public Property() { Kind = NodeType.Property; }

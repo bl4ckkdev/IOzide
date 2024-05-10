@@ -2,6 +2,8 @@
 using System;
 using Environment = LangTest.Runtime.Environment;
 using System.Runtime.InteropServices;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace LangTest
 {
@@ -19,7 +21,7 @@ namespace LangTest
 
             string input = Console.ReadLine();
             
-            if (input == "1") Repl();
+            if (input == "1") REPL();
             else if (input == "2") RunFile();
             else if (input == "3") System.Environment.Exit(1);
             else
@@ -96,7 +98,7 @@ namespace LangTest
             return string.Empty;
         }
         
-        public static void Repl()
+        public static void REPL()
         {
             Parser parser = new Parser();
             Environment env = Environment.CreateGlobalEnvironment();
@@ -112,6 +114,15 @@ namespace LangTest
                 
                 var result = Interpreter.Evaluate(program, env);
             }
+        }
+
+        public static void PrettyPrint(object obj)
+        {
+            var jsonString = JsonConvert.SerializeObject(
+                obj, Formatting.Indented,
+                new JsonConverter[] {new StringEnumConverter()});
+
+            Console.WriteLine(jsonString);
         }
     }
 }

@@ -119,7 +119,23 @@ namespace LangTest
                         col++;
                         source.RemoveAt(0);
                     }
+                }
+                else if (source[0] == "\"")
+                {
+                    string str = "";
+
+                    Console.WriteLine("test");
                     
+                    source.RemoveAt(0);
+                    while (source[0] != "\"")
+                    {
+                        str += source[0];
+                        col++;
+                        
+                        source.RemoveAt(0);
+                    }
+                    source.RemoveAt(0);
+                    tokens.Add(CreateToken(str, TokenType.String));
                 }
                 else
                 {

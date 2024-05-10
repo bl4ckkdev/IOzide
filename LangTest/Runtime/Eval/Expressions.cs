@@ -8,7 +8,7 @@ using Runtime;
 
 public class Expressions
 {
-     public static Values.NumberValue EvaluateNumericBinaryExpression(Values.NumberValue left, Values.NumberValue right, string op)
+     public static Values.NumberValue EvaluateNumericBinaryExpression(Values.RuntimeValue left, Values.RuntimeValue right, string op)
      {
          double result = 0;
          
@@ -38,6 +38,37 @@ public class Expressions
          };
      }
      
+     public static Values.StringValue EvaluateConcatExpression(Values.RuntimeValue left, Values.RuntimeValue right, string op)
+     {
+         string result = "";
+         
+         switch (op)
+         {
+             case "+":
+                 result = left.Value.ToString() + right.Value.ToString();
+                 break;
+             case "*":
+                 try
+                 {
+                     double mul = Convert.ToDouble(right.Value);
+                     
+                     for (int i = 0; i < mul; i++) result += left.Value.ToString();
+                 }
+                 catch
+                 {
+                     throw new Exception("Expected number in right hand side of multiplicative string concatenation.");
+                 }
+                 break;
+             default: return new Values.StringValue { Value = null, Type = Values.ValueType.String};
+         }
+    
+         return new Values.StringValue
+         {
+             Value = result,
+             Type = Values.ValueType.String
+         };
+     }
+     
      public static Values.RuntimeValue EvaluateBinaryExpression(AST.BinaryExpression binop, Environment environment)
      {
          Values.RuntimeValue left = Interpreter.Evaluate(binop.Left, environment);
@@ -46,6 +77,11 @@ public class Expressions
          if (left.Type == Values.ValueType.Number && right.Type == Values.ValueType.Number)
          {
              return EvaluateNumericBinaryExpression(left as Values.NumberValue, right as Values.NumberValue, binop.Operator);
+         }
+         
+         if (left.Type == Values.ValueType.String || right.Type == Values.ValueType.String)
+         {
+             return EvaluateConcatExpression(left, right, binop.Operator);
          }
     
          return Values.Null();

@@ -9,6 +9,7 @@ namespace LangTest.Runtime
         {
             Null,
             Number,
+            String,
             Boolean,
             Object,
             NativeFunction,
@@ -50,6 +51,15 @@ namespace LangTest.Runtime
             }
         }
         
+        public class StringValue : RuntimeValue
+        {
+            public StringValue()
+            {
+                Value = "";
+                Type = ValueType.String;
+            }
+        }
+        
         public class ObjectValue : RuntimeValue
         {
             public Dictionary<string, RuntimeValue> Properties = new Dictionary<string, RuntimeValue>();
@@ -57,10 +67,10 @@ namespace LangTest.Runtime
             public ObjectValue() => Type = ValueType.Object;
         }
 
-        public static NumberValue Number(double n = 0) => new NumberValue
+        public static StringValue String(string s = "") => new StringValue
         {
-            Type = ValueType.Number,
-            Value = n
+            Type = ValueType.String,
+            Value = s
         };
         
         

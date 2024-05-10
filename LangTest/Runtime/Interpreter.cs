@@ -11,9 +11,9 @@ namespace LangTest.Runtime
             switch (ASTNode.Kind)
             {
                 case AST.NodeType.NumericLiteral:
-                    return new Values.NumberValue { 
-                        Value = ((AST.NumericLiteral)ASTNode).Value,
-                        Type = Values.ValueType.Number};
+                    return new Values.NumberValue { Value = ((AST.NumericLiteral)ASTNode).Value, Type = Values.ValueType.Number};
+                case AST.NodeType.StringLiteral:
+                    return new Values.StringValue { Value = ((AST.StringLiteral)ASTNode).Value, Type = Values.ValueType.String};
                 case AST.NodeType.Identifier:
                     return Expressions.EvaluateIdentifier(ASTNode as AST.Identifier, environment);
                 case AST.NodeType.ObjectLiteral:

@@ -279,7 +279,7 @@ namespace LangTest
             {
                 callExpression = ParseCallExpression(callExpression) as AST.CallExpression;
             }
-
+            
             return callExpression;
         }
 
@@ -355,6 +355,8 @@ namespace LangTest
                     return new AST.Identifier { Kind = AST.NodeType.Identifier, Symbol = Eat().Value};
                 case Lexer.TokenType.Number:
                     return new AST.NumericLiteral { Kind = AST.NodeType.NumericLiteral, Value = float.Parse(Eat().Value)};
+                case Lexer.TokenType.String:
+                    return new AST.StringLiteral { Kind = AST.NodeType.StringLiteral, Value = Eat().Value };
                 case Lexer.TokenType.OpenParen:
                     Eat();
                     AST.Expression value = ParseExpression();
