@@ -9,6 +9,7 @@ namespace LangTest
             Program,
             VariableDeclaration,
             FunctionDeclaration,
+            IfStatementDeclaration,
             
             AssignmentExpression,
             MemberExpression,
@@ -59,6 +60,19 @@ namespace LangTest
             {
                 parameters = new List<string>();
                 Kind = NodeType.FunctionDeclaration;
+            }
+        }
+        
+        public class IfStatement : Statement
+        {
+            public List<Expression> conditions;
+            public List<Statement> Body;
+            public List<bool> Or;
+            
+            public IfStatement()
+            {
+                conditions = new List<Expression>();
+                Kind = NodeType.IfStatementDeclaration;
             }
         }
 

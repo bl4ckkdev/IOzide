@@ -36,24 +36,35 @@ public class Environment
         env.DeclareVariable("time", Values.NativeFunction(Time, env), true);
         env.DeclareVariable("input", Values.NativeFunction(Input, env), true);
         env.DeclareVariable("num", Values.NativeFunction(Num, env), true);
+        env.DeclareVariable("die", Values.NativeFunction(Die, env), true);
         
         return env;
     }
 
     public static Values.RuntimeValue Output(List<Values.RuntimeValue> args, Environment env)
     {
+        if (args.Count != 1) throw new Exception("Expected number of arguments of native function \"output()\" to be 1.");
         Console.WriteLine(args[0].Value);
+        return Values.Null();
+    }
+    
+    public static Values.RuntimeValue Die(List<Values.RuntimeValue> args, Environment env)
+    {
+        if (args.Count != 0) throw new Exception("Expected number of arguments of native function \"die()\" to be 0.");
+        System.Environment.Exit(0);
         return Values.Null();
     }
     
     public static Values.RuntimeValue Write(List<Values.RuntimeValue> args, Environment env)
     {
+        if (args.Count != 1) throw new Exception("Expected number of arguments of native function \"write()\" to be 1.");
         Console.Write(args[0].Value);
         return Values.Null();
     }
     
     public static Values.RuntimeValue Time(List<Values.RuntimeValue> args, Environment env)
     {
+        if (args.Count != 0) throw new Exception("Expected number of arguments of native function \"time()\" to be 0.");
         return new Values.NumberValue
         {
             Value = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
@@ -63,7 +74,8 @@ public class Environment
     
     public static Values.RuntimeValue Input(List<Values.RuntimeValue> args, Environment env)
     {
-        Console.Write(args[0].Value.ToString());
+        if (args.Count > 1) throw new Exception("Expected number of arguments of native function \"input()\" to be 0 or 1.");
+        Console.Write(args.Count > 0 ? args[0].Value.ToString() : "");
         return new Values.StringValue
         {
             Value = Console.ReadLine(),
@@ -73,6 +85,7 @@ public class Environment
     
     public static Values.RuntimeValue Num(List<Values.RuntimeValue> args, Environment env)
     {
+        if (args.Count != 1) throw new Exception("Expected number of arguments of native function \"num()\" to be 1.");
         return new Values.NumberValue
         {
             Value = Convert.ToDouble(args[0].Value),

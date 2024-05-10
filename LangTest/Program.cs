@@ -20,8 +20,7 @@ namespace LangTest
                 $"— IOzide {Version} ALPHA (AIO) ———————————————————————————\n\n" +
                 "Enter Repl: [1]\n" +
                 $"Run Script: [2]\n" +
-                $"Exit [3]\n\n> "
-                );
+                $"Exit [3]\n\n> ");
 
             string input = Console.ReadLine();
             
@@ -48,10 +47,10 @@ namespace LangTest
             string file = ShowDialog();
             if (file == "") return;
             string input = System.IO.File.ReadAllText(file);
-            
+
             AST.Program program = parser.ProduceAST(input);
             var result = Interpreter.Evaluate(program, env);
-            
+
             FindMainFunction(program, args, env);
         }
         

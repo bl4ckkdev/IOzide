@@ -13,7 +13,8 @@ namespace LangTest.Runtime
             Boolean,
             Object,
             NativeFunction,
-            Function
+            Function,
+            IfStatement,
         }
 
         public class RuntimeValue
@@ -115,6 +116,18 @@ namespace LangTest.Runtime
             public List<AST.Statement> Body;
             
             public FunctionValue()
+            {
+                Type = ValueType.Function;
+            }
+        }
+        
+        public class IfStatementValue : RuntimeValue
+        {
+            public List<AST.Expression> Conditions;
+            public List<AST.Statement> Body;
+            public Environment DeclarationEnvironment;
+            
+            public IfStatementValue()
             {
                 Type = ValueType.Function;
             }

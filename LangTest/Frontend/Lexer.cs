@@ -33,6 +33,10 @@ namespace LangTest
             BinaryOperator,
             Let,
             Const,
+            If,
+            And,
+            Or,
+            Not,
             Function,
             EOF,
         }
@@ -42,6 +46,7 @@ namespace LangTest
             {"let", TokenType.Let},
             {"const", TokenType.Const},
             {"fn", TokenType.Function},
+            {"if", TokenType.If},
         };
         
         public static List<Token> Tokenize(string code)
@@ -80,6 +85,26 @@ namespace LangTest
                 {
                     tokens.Add(CreateToken(source[0], TokenType.CloseBracket));
                     source.RemoveAt(0);
+                }
+                else if (source[0] == "&")
+                {
+                    if (source.Count > 1 && source[1] == "&")
+                    {
+                        tokens.Add(CreateToken(source[0], TokenType.And));
+                        source.RemoveAt(0);
+                        source.RemoveAt(0);
+                    }
+                    continue;
+                }
+                else if (source[0] == "|")
+                {
+                    if (source.Count > 1 && source[1] == "|")
+                    {
+                        tokens.Add(CreateToken(source[0], TokenType.Or));
+                        source.RemoveAt(0);
+                        source.RemoveAt(0);
+                    }
+                    continue;
                 }
                 else if (source[0] == "+" || source[0] == "-" || source[0] == "*" || source[0] == "/" || source[0] == "%" || source[0] == "^")
                 {
@@ -121,6 +146,11 @@ namespace LangTest
                         col++;
                         source.RemoveAt(0);
                     }
+                }
+                else if (source[0] == "!")
+                {
+                    tokens.Add(CreateToken(source[0], TokenType.Not));
+                    source.RemoveAt(0);
                 }
                 else if (source[0] == "\"")
                 {
@@ -197,6 +227,7 @@ namespace LangTest
                             if (identifier == "let") tokens.Add(CreateToken(identifier, TokenType.Let));
                             if (identifier == "const") tokens.Add(CreateToken(identifier, TokenType.Const));
                             if (identifier == "fn") tokens.Add(CreateToken(identifier, TokenType.Function));
+                            if (identifier == "if") tokens.Add(CreateToken(identifier, TokenType.If));
                         }
                     }
                     else if (IsSkippable(source[0]))
