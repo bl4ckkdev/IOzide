@@ -1,7 +1,7 @@
-let a = 5;                   ~ Creates a variable with the value "5"
+let number = num(input("Enter a number: ")); ~ Creates a variable with a value provided by the user
 
-fn increment(x, amount) {    ~ Function with 2 arguments
-    x + amount               ~ Returns x + amount
+fn increment(x, amount) {                    ~ Function with 2 arguments
+    x + amount;                              ~ Returns x + amount
 }
 
-print(increment(a, 5))       ~ Prints value that function returns
+output(increment(number, 5));                ~ Prints value that function returns

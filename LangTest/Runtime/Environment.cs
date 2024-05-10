@@ -35,6 +35,7 @@ public class Environment
         env.DeclareVariable("write", Values.NativeFunction(Write, env), true);
         env.DeclareVariable("time", Values.NativeFunction(Time, env), true);
         env.DeclareVariable("input", Values.NativeFunction(Input, env), true);
+        env.DeclareVariable("num", Values.NativeFunction(Num, env), true);
         
         return env;
     }
@@ -66,6 +67,15 @@ public class Environment
         return new Values.StringValue
         {
             Value = Console.ReadLine(),
+            Type = Values.ValueType.String
+        };
+    }
+    
+    public static Values.RuntimeValue Num(List<Values.RuntimeValue> args, Environment env)
+    {
+        return new Values.NumberValue
+        {
+            Value = Convert.ToDouble(args[0].Value),
             Type = Values.ValueType.Number
         };
     }

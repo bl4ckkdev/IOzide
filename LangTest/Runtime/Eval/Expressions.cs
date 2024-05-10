@@ -11,7 +11,7 @@ public class Expressions
      public static Values.NumberValue EvaluateNumericBinaryExpression(Values.RuntimeValue left, Values.RuntimeValue right, string op)
      {
          double result = 0;
-         
+
          double l = Convert.ToDouble(left.Value);
          double r = Convert.ToDouble(right.Value);
          
