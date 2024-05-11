@@ -53,10 +53,10 @@ public class Expressions
          switch (op)
          {
              case "==":
-                 result = left.Value.ToString() == right.Value.ToString();
+                 result = left.Type.ToString() + left.Value.ToString() == right.Type.ToString() + right.Value.ToString();
                  break;
              case "!=":
-                 result = left.Value.ToString() != right.Value.ToString();
+                 result = left.Type.ToString() + left.Value.ToString() != right.Type.ToString() + right.Value.ToString();
                  break;
              case ">":
                  result = Convert.ToDouble(left.Value) > Convert.ToDouble(right.Value);
