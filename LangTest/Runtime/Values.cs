@@ -34,8 +34,6 @@ namespace LangTest.Runtime
 
         public class BooleanValue : RuntimeValue
         {
-            public ValueType Type;
-
             public BooleanValue()
             {
                 Value = false;
@@ -123,12 +121,14 @@ namespace LangTest.Runtime
         
         public class IfStatementValue : RuntimeValue
         {
-            public List<AST.Expression> Conditions;
+            public AST.Expression Conditions;
             public List<AST.Statement> Body;
+            public IfStatementValue Else;
             public Environment DeclarationEnvironment;
             
             public IfStatementValue()
             {
+                Else = null;
                 Type = ValueType.Function;
             }
         }

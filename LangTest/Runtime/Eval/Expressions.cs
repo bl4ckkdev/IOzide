@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace LangTest.Runtime.Eval;
 
@@ -45,6 +46,39 @@ public class Expressions
          };
      }
      
+     public static Values.RuntimeValue EvaluateComparisonExpression(Values.RuntimeValue left, Values.RuntimeValue right, string op)
+     {
+         bool result = false;
+         
+         switch (op)
+         {
+             case "==":
+                 result = left.Value.ToString() == right.Value.ToString();
+                 break;
+             case "!=":
+                 result = left.Value.ToString() != right.Value.ToString();
+                 break;
+             case ">":
+                 result = Convert.ToDouble(left.Value) > Convert.ToDouble(right.Value);
+                 break;
+             case ">=":
+                 result = Convert.ToDouble(left.Value) >= Convert.ToDouble(right.Value);
+                 break;
+             case "<":
+                 result = Convert.ToDouble(left.Value) < Convert.ToDouble(right.Value);
+                 break;
+             case "<=":
+                 result = Convert.ToDouble(left.Value) <= Convert.ToDouble(right.Value);
+                 break;
+         }
+         
+         return new Values.BooleanValue
+         {
+             Value = result,
+             Type = Values.ValueType.Boolean
+         };
+     }
+     
      public static Values.StringValue EvaluateConcatExpression(Values.RuntimeValue left, Values.RuntimeValue right, string op)
      {
          string result = "";
@@ -81,6 +115,16 @@ public class Expressions
          Values.RuntimeValue left = Interpreter.Evaluate(binop.Left, environment);
          Values.RuntimeValue right = Interpreter.Evaluate(binop.Right, environment);
 
+         if (binop.Operator == "==" || binop.Operator == "!=")
+         {
+             return EvaluateComparisonExpression(left, right, binop.Operator);
+         }
+
+         if ((binop.Operator == ">" || binop.Operator == ">=" || binop.Operator == "<=" || binop.Operator == "<=") && left.Type == Values.ValueType.Number && right.Type == Values.ValueType.Number)
+         {
+             return EvaluateComparisonExpression(left, right, binop.Operator);
+         }
+         
          if (left.Type == Values.ValueType.Number && right.Type == Values.ValueType.Number)
          {
              return EvaluateNumericBinaryExpression(left as Values.NumberValue, right as Values.NumberValue, binop.Operator);
@@ -93,11 +137,30 @@ public class Expressions
     
          return Values.Null();
      }
+     
+     public static Values.RuntimeValue EvaluateLogicalExpression(AST.LogicalExpression logop, Environment environment)
+     {
+         Values.RuntimeValue left = Interpreter.Evaluate(logop.Left, environment);
+         Values.RuntimeValue right = Interpreter.Evaluate(logop.Right, environment);
+         
+         if (left.Type == Values.ValueType.Boolean && right.Type == Values.ValueType.Boolean)
+         {
+             return new Values.BooleanValue
+             {
+                 Type = Values.ValueType.Boolean,
+                 Value = logop.Operator == "&&" ? Convert.ToBoolean(left.Value) && Convert.ToBoolean(right.Value) : Convert.ToBoolean(left.Value) || Convert.ToBoolean(right.Value),
+             };
+         }
+    
+         return Values.Null();
+     }
+
     
      public static Values.RuntimeValue EvaluateIdentifier(AST.Identifier identifier, Environment environment)
      {
          var val = environment.LookupVariable(identifier.Symbol);
          if (identifier.Negative && val.Type == Values.ValueType.Number) val.Value = -Convert.ToDouble(val.Value);
+         if (identifier.Negative && val.Type == Values.ValueType.Boolean) val.Value = !Convert.ToBoolean(val.Value);
          return val;
      }
 

@@ -31,9 +31,12 @@ namespace LangTest
             OpenParen, 
             CloseParen,
             BinaryOperator,
+            ComparisonOperator,
             Let,
             Const,
             If,
+            ElseIf,
+            Else,
             And,
             Or,
             Not,
@@ -47,6 +50,9 @@ namespace LangTest
             {"const", TokenType.Const},
             {"fn", TokenType.Function},
             {"if", TokenType.If},
+            {"else if", TokenType.ElseIf},
+            {"elseif", TokenType.ElseIf},
+            {"else", TokenType.Else},
         };
         
         public static List<Token> Tokenize(string code)
@@ -90,7 +96,7 @@ namespace LangTest
                 {
                     if (source.Count > 1 && source[1] == "&")
                     {
-                        tokens.Add(CreateToken(source[0], TokenType.And));
+                        tokens.Add(CreateToken("&&", TokenType.And));
                         source.RemoveAt(0);
                         source.RemoveAt(0);
                     }
@@ -100,7 +106,7 @@ namespace LangTest
                 {
                     if (source.Count > 1 && source[1] == "|")
                     {
-                        tokens.Add(CreateToken(source[0], TokenType.Or));
+                        tokens.Add(CreateToken("||", TokenType.Or));
                         source.RemoveAt(0);
                         source.RemoveAt(0);
                     }
@@ -108,15 +114,52 @@ namespace LangTest
                 }
                 else if (source[0] == "+" || source[0] == "-" || source[0] == "*" || source[0] == "/" || source[0] == "%" || source[0] == "^")
                 {
-                    if (source[1] == "=") continue;
+                    if (source.Count > 1 && source[1] == "=") continue;
                     
                     tokens.Add(CreateToken(source[0], TokenType.BinaryOperator));
                     source.RemoveAt(0);
                 }
                 else if (source[0] == "=")
                 {
-                    tokens.Add(CreateToken(source[0], TokenType.Equals));
-                    source.RemoveAt(0);
+                    if (source.Count > 1 && source[1] == "=")
+                    {
+                        tokens.Add(CreateToken("==", TokenType.ComparisonOperator));
+                        source.RemoveAt(0);
+                        source.RemoveAt(0);
+                    }
+                    else
+                    {
+                        tokens.Add(CreateToken(source[0], TokenType.Equals));
+                        source.RemoveAt(0);
+                    }
+                }
+                else if (source[0] == ">")
+                {
+                    if (source.Count > 1 && source[1] == "=")
+                    {
+                        tokens.Add(CreateToken(">=", TokenType.ComparisonOperator));
+                        source.RemoveAt(0);
+                        source.RemoveAt(0);
+                    }
+                    else
+                    {
+                        tokens.Add(CreateToken(source[0], TokenType.ComparisonOperator));
+                        source.RemoveAt(0);
+                    }
+                }
+                else if (source[0] == "<")
+                {
+                    if (source.Count > 1 && source[1] == "=")
+                    {
+                        tokens.Add(CreateToken("<=", TokenType.ComparisonOperator));
+                        source.RemoveAt(0);
+                        source.RemoveAt(0);
+                    }
+                    else
+                    {
+                        tokens.Add(CreateToken(source[0], TokenType.ComparisonOperator));
+                        source.RemoveAt(0);
+                    }
                 }
                 else if (source[0] == ";")
                 {
@@ -149,8 +192,17 @@ namespace LangTest
                 }
                 else if (source[0] == "!")
                 {
-                    tokens.Add(CreateToken(source[0], TokenType.Not));
-                    source.RemoveAt(0);
+                    if (source.Count > 1 && source[1] == "=")
+                    {
+                        tokens.Add(CreateToken("!=", TokenType.ComparisonOperator));
+                        source.RemoveAt(0);
+                        source.RemoveAt(0);
+                    }
+                    else
+                    {
+                        tokens.Add(CreateToken(source[0], TokenType.Not));
+                        source.RemoveAt(0);
+                    }
                 }
                 else if (source[0] == "\"")
                 {
@@ -225,9 +277,11 @@ namespace LangTest
                         else
                         {
                             if (identifier == "let") tokens.Add(CreateToken(identifier, TokenType.Let));
-                            if (identifier == "const") tokens.Add(CreateToken(identifier, TokenType.Const));
-                            if (identifier == "fn") tokens.Add(CreateToken(identifier, TokenType.Function));
-                            if (identifier == "if") tokens.Add(CreateToken(identifier, TokenType.If));
+                            else if (identifier == "const") tokens.Add(CreateToken(identifier, TokenType.Const));
+                            else if (identifier == "fn") tokens.Add(CreateToken(identifier, TokenType.Function));
+                            else if (identifier == "if") tokens.Add(CreateToken(identifier, TokenType.If));
+                            else if (identifier == "elseif") tokens.Add(CreateToken(identifier, TokenType.ElseIf));
+                            else if (identifier == "else") tokens.Add(CreateToken(identifier, TokenType.Else));
                         }
                     }
                     else if (IsSkippable(source[0]))

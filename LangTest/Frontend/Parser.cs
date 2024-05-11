@@ -14,7 +14,7 @@ namespace LangTest
 
         private Lexer.Token At()
         {
-            if (Tokens.Count == 0) throw new Exception("Ran out of code before finishing parsing.");
+            if (Tokens.Count == 0) return null;
             return Tokens[0];
         }
         private Lexer.Token Eat()
@@ -170,20 +170,25 @@ namespace LangTest
         
         public AST.Statement ParseIfStatementDeclaration()
         {
-            Eat();
-            Expect(Lexer.TokenType.OpenParen, "Expected open parenthesis following if keyword.");
+            Lexer.Token t = Eat();
 
-            var args = ParseConditions();
+            AST.Expression args;
+            if (t.Type == Lexer.TokenType.Else)
+            {
+                args = new AST.Identifier
+                {
+                    Kind = AST.NodeType.Identifier,
+                    Symbol = "true"
+                };
+            }
+            else
+            {
+                Expect(Lexer.TokenType.OpenParen, "Expected open parenthesis following if keyword.");
+                args = ParseConditions();
 
-            //foreach (AST.Expression argument in args)
-            //{
-            //    if (argument.Kind != AST.NodeType.Identifier)
-            //        throw new Exception("Inside function declaration expected parameters to be of type string");
-            //}
-            
-            Expect(Lexer.TokenType.CloseParen, "Expected closing parenthesis following if statement");
+                Expect(Lexer.TokenType.CloseParen, "Expected closing parenthesis following if statement");
+            }
             Expect(Lexer.TokenType.OpenBrace, "Expected opening brace after function declaration.");
-
             var body = new List<AST.Statement>();
             while (At().Type != Lexer.TokenType.EOF && At().Type != Lexer.TokenType.CloseBrace)
             {
@@ -192,14 +197,17 @@ namespace LangTest
 
             Expect(Lexer.TokenType.CloseBrace, "Closing brace expected inside function declaration.");
 
-            if (args.conditions.Count == 0) throw new Exception("If statement is empty.");
+            AST.IfStatement right = null;
+            if (At().Type == Lexer.TokenType.Else || At().Type == Lexer.TokenType.ElseIf) right = ParseIfStatementDeclaration() as AST.IfStatement;
+            
+            //if (args.Kind) throw new Exception("If statement is empty.");
             
             return new AST.IfStatement
             {
                 Kind = AST.NodeType.IfStatementDeclaration,
                 Body = body,
-                conditions = args.conditions,
-                Or = args.operations,
+                conditions = args,
+                Else = right
             };
         }
         
@@ -210,7 +218,6 @@ namespace LangTest
 
         private AST.Expression ParseAssignmentExpression()
         {
-            
             var left = ParseObjectExpression();
             if (At().Type == Lexer.TokenType.Equals)
             {
@@ -227,14 +234,46 @@ namespace LangTest
             return left;
         }
 
-        private AST.Expression ParseAndExpression()
+        private AST.Expression ParseLogicalExpression()
+        {
+            AST.Expression left = ParseComparisonExpression();
+
+            if (At().Type == Lexer.TokenType.And || At().Type == Lexer.TokenType.Or)
+            {
+                string op = Eat().Value;
+                AST.Expression right = ParseComparisonExpression();
+
+                left = new AST.LogicalExpression
+                {
+                    Kind = AST.NodeType.LogicalExpression,
+                    Left = left,
+                    Right = right,
+                    Operator = op
+                };
+
+                while (At().Type == Lexer.TokenType.And || At().Type == Lexer.TokenType.Or)
+                {
+                    left = new AST.LogicalExpression
+                    {
+                        Kind = AST.NodeType.LogicalExpression,
+                        Left = left,
+                        Operator = Eat().Value,
+                        Right = ParseExpression(),
+                    };
+                }
+            }
+
+            return left;
+        }
+        
+        private AST.Expression ParseComparisonExpression()
         {
             AST.Expression left = ParseAdditiveExpression();
 
-            if (At().Type == Lexer.TokenType.And)
+            if (At().Type == Lexer.TokenType.ComparisonOperator)
             {
                 string op = Eat().Value;
-                AST.Expression right = ParseAdditiveExpression();
+                AST.Expression right = ParseAssignmentExpression();
 
                 left = new AST.BinaryExpression
                 {
@@ -244,7 +283,7 @@ namespace LangTest
                     Operator = op
                 };
 
-                while (At().Type == Lexer.TokenType.And || At().Type == Lexer.TokenType.Or)
+                while (At().Type == Lexer.TokenType.ComparisonOperator)
                 {
                     left = new AST.BinaryExpression
                     {
@@ -263,7 +302,7 @@ namespace LangTest
         {
             if (At().Type != Lexer.TokenType.OpenBrace)
             {
-                return ParseAdditiveExpression();
+                return ParseLogicalExpression();
             }
 
             Eat();
@@ -399,14 +438,9 @@ namespace LangTest
             return args;
         }
 
-        public struct ExpressionOperationsDeluxeCombo
+        private AST.Expression ParseConditions()
         {
-            public List<AST.Expression> conditions;
-            public List<bool> operations;
-        }
-        private ExpressionOperationsDeluxeCombo ParseConditions()
-        {
-            var args = ParseConditionsList();
+            var args = ParseLogicalExpression();
             
             return args;
         }
@@ -422,27 +456,6 @@ namespace LangTest
             }
 
             return args;
-        }
-        
-        private ExpressionOperationsDeluxeCombo ParseConditionsList()
-        {
-            List<AST.Expression> args = new List<AST.Expression>();
-            args.Add(ParseAssignmentExpression());
-
-            var op = new List<bool>();
-            
-            while (NotEOF() && At().Type == Lexer.TokenType.And || At().Type == Lexer.TokenType.Or)
-            {
-                op.Add(At().Type == Lexer.TokenType.Or);
-                Eat();
-                args.Add(ParseExpression());
-            }
-
-            return new ExpressionOperationsDeluxeCombo
-            {
-                conditions = args,
-                operations = op,
-            };
         }
         
         private AST.Expression ParseMemberExpression()
@@ -489,8 +502,11 @@ namespace LangTest
             
             switch (token)
             {
+                case Lexer.TokenType.Not:
                 case Lexer.TokenType.Identifier:
-                    return new AST.Identifier { Kind = AST.NodeType.Identifier, Symbol = Eat().Value, Negative = false};
+                    bool n = token == Lexer.TokenType.Not;
+                    if (n) Eat();
+                    return new AST.Identifier { Kind = AST.NodeType.Identifier, Negative = n, Symbol = Eat().Value};
                 case Lexer.TokenType.Number:
                     return new AST.NumericLiteral { Kind = AST.NodeType.NumericLiteral, Value = float.Parse(Eat().Value)};
                 case Lexer.TokenType.String:

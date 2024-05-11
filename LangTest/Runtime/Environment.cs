@@ -15,29 +15,15 @@ public class Environment
     public static Environment CreateGlobalEnvironment()
     {
         Environment env = new Environment(null);
-        env.DeclareVariable("null", new Values.NullValue
-        {
-            Type = Values.ValueType.Null,
-            Value = null,
-        }, true);
-        env.DeclareVariable("false", new Values.BooleanValue
-        {
-            Type = Values.ValueType.Boolean,
-            Value = false
-        }, true);
-        env.DeclareVariable("true", new Values.BooleanValue
-        {
-            Type = Values.ValueType.Boolean,
-            Value = true
-        }, true);
-
+        env.DeclareVariable("null", new Values.NullValue { Type = Values.ValueType.Null, Value = null, }, true);
+        env.DeclareVariable("false", new Values.BooleanValue { Type = Values.ValueType.Boolean, Value = false }, true);
+        env.DeclareVariable("true", new Values.BooleanValue { Type = Values.ValueType.Boolean, Value = true }, true);
         env.DeclareVariable("output", Values.NativeFunction(Output, env), true);
         env.DeclareVariable("write", Values.NativeFunction(Write, env), true);
         env.DeclareVariable("time", Values.NativeFunction(Time, env), true);
         env.DeclareVariable("input", Values.NativeFunction(Input, env), true);
         env.DeclareVariable("num", Values.NativeFunction(Num, env), true);
         env.DeclareVariable("die", Values.NativeFunction(Die, env), true);
-        
         return env;
     }
 

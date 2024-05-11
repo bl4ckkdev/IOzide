@@ -20,6 +20,7 @@ namespace LangTest
             StringLiteral,
             Identifier,
             BinaryExpr,
+            LogicalExpression,
             Property,
             ObjectLiteral,
         }
@@ -65,13 +66,12 @@ namespace LangTest
         
         public class IfStatement : Statement
         {
-            public List<Expression> conditions;
+            public Expression conditions;
             public List<Statement> Body;
-            public List<bool> Or;
+            public IfStatement? Else;
             
             public IfStatement()
             {
-                conditions = new List<Expression>();
                 Kind = NodeType.IfStatementDeclaration;
             }
         }
@@ -93,6 +93,13 @@ namespace LangTest
         public class BinaryExpression : Expression
         {
             public BinaryExpression() { Kind = NodeType.BinaryExpr; }
+            public Expression Left, Right;
+            public string Operator;
+        }
+        
+        public class LogicalExpression : Expression
+        {
+            public LogicalExpression() { Kind = NodeType.LogicalExpression; }
             public Expression Left, Right;
             public string Operator;
         }

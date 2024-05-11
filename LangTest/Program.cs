@@ -6,16 +6,19 @@ using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 
 namespace LangTest
 {
     internal class Program
     {
-        public static readonly string Version = "v0.1.2";
+        public static readonly string Version = "v0.1.3";
         
         public static void Main(string[] args)
         {
             // TODO: Add to PATH and run argument
+            
             Console.Write(
                 $"— IOzide {Version} ALPHA (AIO) ———————————————————————————\n\n" +
                 "Enter Repl: [1]\n" +
@@ -44,13 +47,13 @@ namespace LangTest
             Parser parser = new Parser();
             Environment env = Environment.CreateGlobalEnvironment();
             
-            string file = ShowDialog();
+            string file = FileManagement.ShowDialog();
             if (file == "") return;
             string input = System.IO.File.ReadAllText(file);
-
+            
             AST.Program program = parser.ProduceAST(input);
             var result = Interpreter.Evaluate(program, env);
-
+            
             FindMainFunction(program, args, env);
         }
         
@@ -73,54 +76,6 @@ namespace LangTest
                 }
             }
         }
-        
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        public struct OpenFileName
-        {
-            public int lStructSize;
-            public IntPtr hwndOwner;
-            public IntPtr hInstance;
-            public string lpstrFilter;
-            public string lpstrCustomFilter;
-            public int nMaxCustFilter;
-            public int nFilterIndex;
-            public string lpstrFile;
-            public int nMaxFile;
-            public string lpstrFileTitle;
-            public int nMaxFileTitle;
-            public string lpstrInitialDir;
-            public string lpstrTitle;
-            public int Flags;
-            public short nFileOffset;
-            public short nFileExtension;
-            public string lpstrDefExt;
-            public IntPtr lCustData;
-            public IntPtr lpfnHook;
-            public string lpTemplateName;
-            public IntPtr pvReserved;
-            public int dwReserved;
-            public int flagsEx;
-        }
-        
-        [DllImport("comdlg32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        private static extern bool GetOpenFileName(ref OpenFileName ofn);
-
-        private static string ShowDialog()
-        {
-            var ofn = new OpenFileName();
-            ofn.lStructSize = Marshal.SizeOf(ofn);
-            // Define Filter for your extensions (Excel, ...)
-            ofn.lpstrFilter = "IOzide Files (*.io)\0*.io\0All Files (*.*)\0*.*\0";
-            ofn.lpstrFile = new string(new char[256]);
-            ofn.nMaxFile = ofn.lpstrFile.Length;
-            ofn.lpstrFileTitle = new string(new char[64]);
-            ofn.nMaxFileTitle = ofn.lpstrFileTitle.Length;
-            ofn.lpstrTitle = "Open File Dialog...";
-            if (GetOpenFileName(ref ofn))
-                return ofn.lpstrFile;
-            return string.Empty;
-        }
-        
         public static void REPL()
         {
             Parser parser = new Parser();
