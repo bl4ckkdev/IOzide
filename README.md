@@ -1,5 +1,5 @@
 ![alt text][logo] 
-A programming language made with C#.
+A programming language made with C#. The name is inspired by an old program by IBM called "IOzone".
 
 > ⚠️ This language is in very early stages. While completely functional, it is missing a lot of features and it isn't stable.
 ## Features
