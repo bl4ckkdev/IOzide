@@ -9,7 +9,7 @@ A programming language made with C#. The name is inspired by an old program by I
 - [x] ~~Compiler~~, Interpreter & REPL
 - [x] Custom structs
 - [x] Comments
-- [ ] For/while loops, if statements
+- [x] ~~For/while loops~~, if statements
 - [ ] Multiple file projects
 - [ ] Classes
 - [ ] Namespaces
