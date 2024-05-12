@@ -15,6 +15,9 @@ namespace LangTest.Runtime
             NativeFunction,
             Function,
             IfStatement,
+            ForLoopStatement,
+            WhileLoopStatement,
+            DieStatement,
         }
 
         public class RuntimeValue
@@ -129,7 +132,41 @@ namespace LangTest.Runtime
             public IfStatementValue()
             {
                 Else = null;
-                Type = ValueType.Function;
+                Type = ValueType.IfStatement;
+            }
+        }
+        
+        public class WhileLoopValue : RuntimeValue
+        {
+            public AST.Expression Conditions;
+            public List<AST.Statement> Body;
+            public Environment DeclarationEnvironment;
+            
+            public WhileLoopValue()
+            {
+                Type = ValueType.WhileLoopStatement;
+            }
+        }
+        
+        public class ForLoopValue : RuntimeValue
+        {
+            public AST.Expression Arg2;
+            public AST.Statement Arg1, Arg3;
+            public Environment DeclarationEnvironment;
+            public List<AST.Statement> Body;
+            
+            public ForLoopValue()
+            {
+                Type = ValueType.ForLoopStatement;
+            }
+        }
+        
+        public class DieStatementValue : RuntimeValue
+        {
+            public int ExitCode;
+            public DieStatementValue()
+            {
+                Type = ValueType.DieStatement;
             }
         }
     }

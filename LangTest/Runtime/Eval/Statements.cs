@@ -60,4 +60,70 @@ public class Statements
         
         return statement;
     }
+    
+    public static Values.RuntimeValue EvaluateWhileLoopDeclaration(AST.WhileLoopStatement declaration, Environment environment)
+    {
+        Values.WhileLoopValue statement = new Values.WhileLoopValue
+        {
+            Type = Values.ValueType.IfStatement,
+            Conditions = declaration.conditions,
+            DeclarationEnvironment = environment,
+            Body = declaration.Body,
+        };
+        
+        var cond = Interpreter.Evaluate(statement.Conditions, environment);
+        Console.WriteLine(cond.Type);
+        if (cond.Type != Values.ValueType.Boolean) throw new Exception("Expected boolean inside of while statement.");
+        else
+        {
+            while (Convert.ToBoolean(Interpreter.Evaluate(statement.Conditions, environment).Value))
+            {
+                foreach (AST.Statement st in statement.Body) Interpreter.Evaluate(st, environment);
+            }
+        }
+        
+        return statement;
+    }
+    
+    public static Values.RuntimeValue EvaluateForLoopDeclaration(AST.ForLoopStatement declaration, Environment environment)
+    {
+        Values.ForLoopValue statement = new Values.ForLoopValue
+        {
+            Type = Values.ValueType.IfStatement,
+            Arg1 = declaration.arg1,
+            Arg2 = declaration.arg2,
+            Arg3 = declaration.arg3,
+            DeclarationEnvironment = environment,
+            Body = declaration.Body,
+        };
+        
+        Interpreter.Evaluate(statement.Arg1, environment);
+        
+        Values.RuntimeValue cond = Interpreter.Evaluate(statement.Arg2, environment); // for (let i = 0; i < 5; i = i + 1) { }
+        
+        if (cond.Type != Values.ValueType.Boolean) throw new Exception("Expected logical expression or boolean inside second argument of for loop.");
+        else
+        {
+            while (Convert.ToBoolean(Interpreter.Evaluate(statement.Arg2, environment).Value))
+            {
+                foreach (AST.Statement st in declaration.Body) Interpreter.Evaluate(st, environment);
+                Interpreter.Evaluate(statement.Arg3, environment);
+            }
+        }
+        
+        return statement;
+    }
+
+    
+    public static Values.RuntimeValue EvaluateDieStatement(AST.DieStatement declaration, Environment environment)
+    {
+        Values.DieStatementValue statement = new Values.DieStatementValue
+        {
+            Type = Values.ValueType.DieStatement,
+            ExitCode = declaration.ExitCode
+        };
+
+        System.Environment.Exit(statement.ExitCode);
+        return statement;
+    }
 }

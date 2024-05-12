@@ -13,8 +13,8 @@ public class Expressions
      {
          double result = 0;
 
-         double l = Convert.ToDouble(left.Value);
-         double r = Convert.ToDouble(right.Value);
+         double l = Math.Round(Convert.ToDouble(left.Value), 7);
+         double r = Math.Round(Convert.ToDouble(right.Value), 7);
          
          switch (op)
          {
@@ -74,7 +74,7 @@ public class Expressions
          
          return new Values.BooleanValue
          {
-             Value = result,
+             Value = Convert.ToBoolean(result),
              Type = Values.ValueType.Boolean
          };
      }
@@ -120,7 +120,7 @@ public class Expressions
              return EvaluateComparisonExpression(left, right, binop.Operator);
          }
 
-         if ((binop.Operator == ">" || binop.Operator == ">=" || binop.Operator == "<=" || binop.Operator == "<=") && left.Type == Values.ValueType.Number && right.Type == Values.ValueType.Number)
+         if ((binop.Operator == ">" || binop.Operator == ">=" || binop.Operator == "<=" || binop.Operator == "<") && left.Type == Values.ValueType.Number && right.Type == Values.ValueType.Number)
          {
              return EvaluateComparisonExpression(left, right, binop.Operator);
          }
@@ -170,7 +170,14 @@ public class Expressions
              throw new Exception($"Invalid left side inside assignment expression.");
          
          string name = (node.Assignee as AST.Identifier).Symbol;
-         return environment.AssignVariable(name, Interpreter.Evaluate(node.Value, environment));
+         return environment.AssignVariable(name, Interpreter.Evaluate(node.Operator == "=" ? node.Value : new AST.BinaryExpression
+             {
+                 Kind = AST.NodeType.BinaryExpr,
+                 Left = node.Assignee,
+                 Operator = node.Operator[0].ToString(),
+                 Right = node.Value,
+                 
+             }, environment));
      }
 
      public static Values.RuntimeValue EvaluateObjectExpression(AST.ObjectLiteral _object, Environment environment)

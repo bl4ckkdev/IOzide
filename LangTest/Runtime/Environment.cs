@@ -23,7 +23,8 @@ public class Environment
         env.DeclareVariable("time", Values.NativeFunction(Time, env), true);
         env.DeclareVariable("input", Values.NativeFunction(Input, env), true);
         env.DeclareVariable("num", Values.NativeFunction(Num, env), true);
-        env.DeclareVariable("die", Values.NativeFunction(Die, env), true);
+        env.DeclareVariable("str", Values.NativeFunction(Str, env), true);
+        env.DeclareVariable("bool", Values.NativeFunction(Bool, env), true);
         return env;
     }
 
@@ -31,13 +32,6 @@ public class Environment
     {
         if (args.Count != 1) throw new Exception("Expected number of arguments of native function \"output()\" to be 1.");
         Console.WriteLine(args[0].Value);
-        return Values.Null();
-    }
-    
-    public static Values.RuntimeValue Die(List<Values.RuntimeValue> args, Environment env)
-    {
-        if (args.Count != 0) throw new Exception("Expected number of arguments of native function \"die()\" to be 0.");
-        System.Environment.Exit(0);
         return Values.Null();
     }
     
@@ -76,6 +70,26 @@ public class Environment
         {
             Value = Convert.ToDouble(args[0].Value),
             Type = Values.ValueType.Number
+        };
+    }
+    
+    public static Values.RuntimeValue Bool(List<Values.RuntimeValue> args, Environment env)
+    {
+        if (args.Count != 1) throw new Exception("Expected number of arguments of native function \"bool()\" to be 1.");
+        return new Values.BooleanValue
+        {
+            Value = Convert.ToBoolean(args[0].Value),
+            Type = Values.ValueType.Boolean
+        };
+    }
+    
+    public static Values.RuntimeValue Str(List<Values.RuntimeValue> args, Environment env)
+    {
+        if (args.Count != 1) throw new Exception("Expected number of arguments of native function \"str()\" to be 1.");
+        return new Values.BooleanValue
+        {
+            Value = args[0].Value.ToString(),
+            Type = Values.ValueType.String
         };
     }
 

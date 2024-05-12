@@ -10,6 +10,9 @@ namespace LangTest
             VariableDeclaration,
             FunctionDeclaration,
             IfStatementDeclaration,
+            ForLoopDeclaration,
+            WhileLoopDeclaration,
+            DieStatement,
             
             AssignmentExpression,
             MemberExpression,
@@ -75,6 +78,38 @@ namespace LangTest
                 Kind = NodeType.IfStatementDeclaration;
             }
         }
+        
+        public class WhileLoopStatement : Statement
+        {
+            public Expression conditions;
+            public List<Statement> Body;
+            
+            public WhileLoopStatement()
+            {
+                Kind = NodeType.WhileLoopDeclaration;
+            }
+        }
+        
+        public class ForLoopStatement : Statement
+        {
+            public Statement arg1, arg3;
+            public Expression arg2;
+            public List<Statement> Body;
+            
+            public ForLoopStatement()
+            {
+                Kind = NodeType.ForLoopDeclaration;
+            }
+        }
+        
+        public class DieStatement : Statement
+        {
+            public int ExitCode;
+            public DieStatement()
+            {
+                Kind = NodeType.DieStatement;
+            }
+        }
 
         public class Expression : Statement
         {
@@ -83,6 +118,7 @@ namespace LangTest
         public class AssignmentExpression : Expression
         {
             public Expression Assignee, Value;
+            public string Operator;
 
             public AssignmentExpression()
             {

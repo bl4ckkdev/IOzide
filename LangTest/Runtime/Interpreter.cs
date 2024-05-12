@@ -30,6 +30,12 @@ namespace LangTest.Runtime
                         return Expressions.EvaluateAssignment(ASTNode as AST.AssignmentExpression, environment);
                     case AST.NodeType.IfStatementDeclaration:
                         return Statements.EvaluateIfStatementDeclaration(ASTNode as AST.IfStatement, environment);
+                    case AST.NodeType.WhileLoopDeclaration:
+                        return Statements.EvaluateWhileLoopDeclaration(ASTNode as AST.WhileLoopStatement, environment);
+                    case AST.NodeType.ForLoopDeclaration:
+                        return Statements.EvaluateForLoopDeclaration(ASTNode as AST.ForLoopStatement, environment);
+                    case AST.NodeType.DieStatement:
+                        return Statements.EvaluateDieStatement(ASTNode as AST.DieStatement, environment);
                     case AST.NodeType.Program:
                         return Statements.EvaluateProgram(ASTNode as AST.Program, environment);
                     case AST.NodeType.VariableDeclaration:

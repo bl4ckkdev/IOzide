@@ -32,9 +32,13 @@ namespace LangTest
             CloseParen,
             BinaryOperator,
             ComparisonOperator,
+            UnaryOperator,
             Let,
             Const,
             If,
+            For,
+            While,
+            Die,
             ElseIf,
             Else,
             And,
@@ -50,11 +54,13 @@ namespace LangTest
             {"const", TokenType.Const},
             {"fn", TokenType.Function},
             {"if", TokenType.If},
-            {"else if", TokenType.ElseIf},
+            {"die", TokenType.Die},
             {"elseif", TokenType.ElseIf},
             {"else", TokenType.Else},
+            {"while", TokenType.While},
+            {"for", TokenType.For},
         };
-        
+
         public static List<Token> Tokenize(string code)
         {
             List<Token> tokens = new List<Token>();
@@ -114,7 +120,20 @@ namespace LangTest
                 }
                 else if (source[0] == "+" || source[0] == "-" || source[0] == "*" || source[0] == "/" || source[0] == "%" || source[0] == "^")
                 {
-                    if (source.Count > 1 && source[1] == "=") continue;
+                    if (source.Count > 1 && source[1] == "=")
+                    {
+                        tokens.Add(CreateToken(source[0] + "=", TokenType.Equals));
+                        source.RemoveAt(0);
+                        source.RemoveAt(0);
+                        continue;
+                    }
+                    else if (source.Count > 1 && source[1] == source[0])
+                    {
+                        tokens.Add(CreateToken(source[0] + source[0], TokenType.UnaryOperator));
+                        source.RemoveAt(0);
+                        source.RemoveAt(0);
+                        continue;
+                    }
                     
                     tokens.Add(CreateToken(source[0], TokenType.BinaryOperator));
                     source.RemoveAt(0);
@@ -178,6 +197,20 @@ namespace LangTest
                 }
                 else if (source[0] == ".")
                 {
+                    if (source.Count > 1 && IsInteger(source[1]))
+                    {
+                        string number = "";
+
+                        while (source.Count > 0 && IsInteger(source[0]))
+                        {
+                            number += source[0];
+                            col++;
+                            source.RemoveAt(0);
+                        }
+                        col--;
+                        tokens.Add(CreateToken(number, TokenType.Number));
+                        continue;
+                    }
                     tokens.Add(CreateToken(source[0], TokenType.Dot));
                     source.RemoveAt(0);
                 }
@@ -282,6 +315,9 @@ namespace LangTest
                             else if (identifier == "if") tokens.Add(CreateToken(identifier, TokenType.If));
                             else if (identifier == "elseif") tokens.Add(CreateToken(identifier, TokenType.ElseIf));
                             else if (identifier == "else") tokens.Add(CreateToken(identifier, TokenType.Else));
+                            else if (identifier == "while") tokens.Add(CreateToken(identifier, TokenType.While));
+                            else if (identifier == "for") tokens.Add(CreateToken(identifier, TokenType.For));
+                            else if (identifier == "die") tokens.Add(CreateToken(identifier, TokenType.Die));
                         }
                     }
                     else if (IsSkippable(source[0]))
@@ -299,7 +335,7 @@ namespace LangTest
         }
         
         public static bool IsAlphabetic(string text) => text.ToUpper() != text.ToLower() && !IsSkippable(text);
-        public static bool IsInteger(string text) => text.All(char.IsDigit);
+        public static bool IsInteger(string text) => text.All(x => char.IsDigit(x) || x == '.');
         public static bool IsSkippable(string text) => text == " " || text == "\n" || text == "\t" || text == "\r";
 
         public static Token CreateToken(string value, TokenType type)

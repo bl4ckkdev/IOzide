@@ -72,7 +72,7 @@ namespace LangTest
             }
         }
 
-        private AST.Statement ParseStatement()
+        private AST.Statement ParseStatement(bool semi = true)
         {
             AST.Statement ret;
             bool needsSemicolon = false;
@@ -89,14 +89,25 @@ namespace LangTest
                 case Lexer.TokenType.If:
                     ret = ParseIfStatementDeclaration();
                     break;
+                case Lexer.TokenType.While:
+                    ret = ParseWhileLoopDeclaration();
+                    break;
+                case Lexer.TokenType.Die:
+                    ret = ParseDieStatement();
+                    needsSemicolon = true;
+                    break;
+                case Lexer.TokenType.For:
+                    ret = ParseForLoopDeclaration();
+                    break;
                 default:
                     ret = ParseExpression();
                     needsSemicolon = true;
                     break;
             }
 
-            if (needsSemicolon && Eat().Type != Lexer.TokenType.Semicolon)
-                throw new Exception($"Expected semicolon after Statement.");
+            if (needsSemicolon && semi && Eat().Type != Lexer.TokenType.Semicolon)
+                throw new Exception($"Expected semicolon after Statement."); 
+
             return ret;
         }
 
@@ -168,6 +179,31 @@ namespace LangTest
             return function;
         }
         
+        public AST.Statement ParseWhileLoopDeclaration()
+        {
+            Lexer.Token t = Eat();
+
+            AST.Expression args;
+            Expect(Lexer.TokenType.OpenParen, "Expected open parenthesis following if keyword.");
+            args = ParseConditions();
+            Expect(Lexer.TokenType.CloseParen, "Expected closing parenthesis following if statement");
+            Expect(Lexer.TokenType.OpenBrace, "Expected opening brace after function declaration.");
+            var body = new List<AST.Statement>();
+            while (At().Type != Lexer.TokenType.EOF && At().Type != Lexer.TokenType.CloseBrace)
+            {
+                body.Add(ParseStatement());
+            }
+
+            Expect(Lexer.TokenType.CloseBrace, "Closing brace expected inside function declaration.");
+            
+            return new AST.WhileLoopStatement
+            {
+                Kind = AST.NodeType.WhileLoopDeclaration,
+                Body = body,
+                conditions = args,
+            };
+        }
+
         public AST.Statement ParseIfStatementDeclaration()
         {
             Lexer.Token t = Eat();
@@ -183,10 +219,10 @@ namespace LangTest
             }
             else
             {
-                Expect(Lexer.TokenType.OpenParen, "Expected open parenthesis following if keyword.");
+                Expect(Lexer.TokenType.OpenParen, "Expected open parenthesis following while keyword.");
                 args = ParseConditions();
 
-                Expect(Lexer.TokenType.CloseParen, "Expected closing parenthesis following if statement");
+                Expect(Lexer.TokenType.CloseParen, "Expected closing parenthesis following while statement");
             }
             Expect(Lexer.TokenType.OpenBrace, "Expected opening brace after function declaration.");
             var body = new List<AST.Statement>();
@@ -200,14 +236,66 @@ namespace LangTest
             AST.IfStatement right = null;
             if (At().Type == Lexer.TokenType.Else || At().Type == Lexer.TokenType.ElseIf) right = ParseIfStatementDeclaration() as AST.IfStatement;
             
-            //if (args.Kind) throw new Exception("If statement is empty.");
-            
             return new AST.IfStatement
             {
                 Kind = AST.NodeType.IfStatementDeclaration,
                 Body = body,
                 conditions = args,
                 Else = right
+            };
+        }
+        
+        public AST.Statement ParseForLoopDeclaration()
+        {
+            Lexer.Token t = Eat();
+            
+            AST.Statement arg1;
+            AST.Expression arg2;
+            AST.Statement arg3;
+            
+            Expect(Lexer.TokenType.OpenParen, "Expected open parenthesis following if keyword.");
+            arg1 = ParseStatement();
+            if (arg1.Kind != AST.NodeType.VariableDeclaration && arg1.Kind != AST.NodeType.AssignmentExpression && arg1.Kind != AST.NodeType.CallExpression)
+                throw new Exception("Expected declaration, assignment or call inside of 1st argument of for loop"); // 1. declaration, assignment, call, unary incr / decr
+            arg2 = ParseExpression();
+            if (arg2.Kind != AST.NodeType.BinaryExpr)
+                throw new Exception("Expected logical expression inside of 2nd argument of for loop"); // 2. comparison, 3. assignment, call, unary incr / decr 1
+            Expect(Lexer.TokenType.Semicolon, "Expected closing parenthesis following second expression in for loop.");
+            arg3 = ParseStatement(false);
+            if (arg3.Kind != AST.NodeType.AssignmentExpression && arg3.Kind != AST.NodeType.CallExpression)
+                throw new Exception("Expected assignment or call inside of 3nd argument of for loop"); // 3. assignment, call, unary incr / decr 1
+            
+            Expect(Lexer.TokenType.CloseParen, "Expected closing parenthesis following if statement");
+            Expect(Lexer.TokenType.OpenBrace, "Expected opening brace after function declaration.");
+            var body = new List<AST.Statement>();
+            while (At().Type != Lexer.TokenType.EOF && At().Type != Lexer.TokenType.CloseBrace)
+            {
+                body.Add(ParseStatement());
+            }
+
+            Expect(Lexer.TokenType.CloseBrace, "Closing brace expected inside function declaration.");
+            
+            return new AST.ForLoopStatement
+            {
+                Kind = AST.NodeType.ForLoopDeclaration,
+                Body = body,
+                arg1 = arg1,
+                arg2 = arg2,
+                arg3 = arg3,
+            };
+        }
+        
+        public AST.Statement ParseDieStatement()
+        {
+            Eat();
+
+            int exitCode = 0;
+            if (At().Type == Lexer.TokenType.Number) exitCode = Convert.ToInt32(Eat().Value);
+            
+            return new AST.DieStatement()
+            {
+                Kind = AST.NodeType.DieStatement,
+                ExitCode = exitCode
             };
         }
         
@@ -219,15 +307,18 @@ namespace LangTest
         private AST.Expression ParseAssignmentExpression()
         {
             var left = ParseObjectExpression();
+            
             if (At().Type == Lexer.TokenType.Equals)
             {
-                Eat();
+                var t = Eat();
+                
                 var value = ParseAssignmentExpression();
                 return new AST.AssignmentExpression()
                 {
                     Value = value,
                     Assignee = left,
-                    Kind = AST.NodeType.AssignmentExpression
+                    Kind = AST.NodeType.AssignmentExpression,
+                    Operator = t.Value
                 };
             }
             
@@ -360,10 +451,11 @@ namespace LangTest
         private AST.Expression ParseAdditiveExpression()
         {
             AST.Expression left = ParseMultiplicativeExpression();
-
+            
             while (At().Value == "+" || At().Value == "-")
             {
                 string op = Eat().Value;
+
                 AST.Expression right = ParseMultiplicativeExpression();
 
                 left = new AST.BinaryExpression
@@ -381,7 +473,7 @@ namespace LangTest
         private AST.Expression ParseMultiplicativeExpression()
         {
             AST.Expression left = ParseCallMemberExpression();
-
+            
             while (At().Value == "*" || At().Value == "/" || At().Value == "%" || At().Value == "^")
             {
                 string op = Eat().Value;
@@ -398,6 +490,7 @@ namespace LangTest
             
             return left;
         }
+        
         private AST.Expression ParseCallMemberExpression()
         {
             var member = ParseMemberExpression();
