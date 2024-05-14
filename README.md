@@ -31,7 +31,7 @@ output(increment(number, 5));                ~ Prints value that function return
 ```
 
 ## Limitations
-Currently, the language is missing crucial features such as loops while also not being stable.
+Currently, the language is missing crucial features while also not being stable.
 
 ___
 > ### ⚠️ Note:
