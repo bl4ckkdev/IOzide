@@ -13,7 +13,7 @@ namespace LangTest
 {
     internal class Program
     {
-        public static readonly string Version = "v0.1.3";
+        public static readonly string Version = "v0.1.4";
         
         public static void Main(string[] args)
         {

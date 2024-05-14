@@ -48,10 +48,12 @@ public class Statements
         };
         
         var cond = Interpreter.Evaluate(statement.Conditions, environment);
+        
         if (cond.Type != Values.ValueType.Boolean) throw new Exception("Expected boolean inside of if statement.");
         else if (cond.Type == Values.ValueType.Boolean && Convert.ToBoolean(cond.Value))
         {
-            foreach (AST.Statement st in statement.Body) Interpreter.Evaluate(st, environment);
+            Environment scope = new Environment(statement.DeclarationEnvironment);
+            foreach (AST.Statement st in statement.Body) Interpreter.Evaluate(st, scope);
         }
         else if (declaration.Else != null)
         {
@@ -72,13 +74,13 @@ public class Statements
         };
         
         var cond = Interpreter.Evaluate(statement.Conditions, environment);
-        Console.WriteLine(cond.Type);
         if (cond.Type != Values.ValueType.Boolean) throw new Exception("Expected boolean inside of while statement.");
         else
         {
             while (Convert.ToBoolean(Interpreter.Evaluate(statement.Conditions, environment).Value))
             {
-                foreach (AST.Statement st in statement.Body) Interpreter.Evaluate(st, environment);
+                Environment scope = new Environment(statement.DeclarationEnvironment);
+                foreach (AST.Statement st in statement.Body) Interpreter.Evaluate(st, scope);
             }
         }
         
@@ -106,7 +108,8 @@ public class Statements
         {
             while (Convert.ToBoolean(Interpreter.Evaluate(statement.Arg2, environment).Value))
             {
-                foreach (AST.Statement st in declaration.Body) Interpreter.Evaluate(st, environment);
+                Environment scope = new Environment(statement.DeclarationEnvironment);
+                foreach (AST.Statement st in declaration.Body) Interpreter.Evaluate(st, scope);
                 Interpreter.Evaluate(statement.Arg3, environment);
             }
         }

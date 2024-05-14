@@ -54,6 +54,8 @@ namespace LangTest.Runtime
                 Console.Write("Error — ");
                 Console.ForegroundColor = currentColor;
                 Console.Write(ex.Message);
+                Console.Write("\nPress anything to exit.. ");
+                Console.ReadLine();
                 System.Environment.Exit(1);
                 throw;
             }

@@ -32,7 +32,6 @@ namespace LangTest
             CloseParen,
             BinaryOperator,
             ComparisonOperator,
-            UnaryOperator,
             Let,
             Const,
             If,
@@ -129,7 +128,7 @@ namespace LangTest
                     }
                     else if (source.Count > 1 && source[1] == source[0])
                     {
-                        tokens.Add(CreateToken(source[0] + source[0], TokenType.UnaryOperator));
+                        tokens.Add(CreateToken(source[0] + source[0], TokenType.Equals));
                         source.RemoveAt(0);
                         source.RemoveAt(0);
                         continue;

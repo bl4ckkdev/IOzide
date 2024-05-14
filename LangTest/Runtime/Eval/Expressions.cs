@@ -175,7 +175,11 @@ public class Expressions
                  Kind = AST.NodeType.BinaryExpr,
                  Left = node.Assignee,
                  Operator = node.Operator[0].ToString(),
-                 Right = node.Value,
+                 Right = node.Operator[1].ToString() == "=" ? node.Value : new AST.NumericLiteral
+                 {
+                     Kind = AST.NodeType.NumericLiteral,
+                     Value = 1,
+                 },
                  
              }, environment));
      }
@@ -223,7 +227,6 @@ public class Expressions
 
              Values.RuntimeValue result = Values.Null();
              
-             // Evaluates the function body, line by line
              foreach (var statement in function.Body)
              {
                  result = Interpreter.Evaluate(statement, scope);

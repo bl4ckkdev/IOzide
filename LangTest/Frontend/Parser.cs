@@ -67,11 +67,13 @@ namespace LangTest
                 Console.Write("Error — ");
                 Console.ForegroundColor = currentColor;
                 Console.Write(ex.Message);
+                Console.Write("\nPress anything to exit.. ");
+                Console.ReadLine();
                 System.Environment.Exit(1);
                 throw;
             }
         }
-
+        
         private AST.Statement ParseStatement(bool semi = true)
         {
             AST.Statement ret;
@@ -307,9 +309,19 @@ namespace LangTest
         private AST.Expression ParseAssignmentExpression()
         {
             var left = ParseObjectExpression();
-            
             if (At().Type == Lexer.TokenType.Equals)
             {
+                if (At().Value == "++" || At().Value == "--")
+                {
+                    return new AST.AssignmentExpression()
+                    {
+                        Value = new AST.NumericLiteral { Value = 1, Kind = AST.NodeType.NumericLiteral},
+                        Assignee = left,
+                        Kind = AST.NodeType.AssignmentExpression,
+                        Operator = Eat().Value
+                    };
+                }
+                
                 var t = Eat();
                 
                 var value = ParseAssignmentExpression();
@@ -452,7 +464,7 @@ namespace LangTest
         {
             AST.Expression left = ParseMultiplicativeExpression();
             
-            while (At().Value == "+" || At().Value == "-")
+            while (At().Type == Lexer.TokenType.BinaryOperator)
             {
                 string op = Eat().Value;
 
