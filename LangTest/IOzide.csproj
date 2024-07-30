@@ -48,6 +48,7 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="ErrorHandling.cs" />
         <Compile Include="FileManagement.cs" />
         <Compile Include="Frontend\AST.cs" />
         <Compile Include="Frontend\Lexer.cs" />

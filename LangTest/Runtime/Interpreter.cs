@@ -46,18 +46,31 @@ namespace LangTest.Runtime
                         throw new NotImplementedException($"This node has not been implemented. {ASTNode.Kind}");
                 }
             }
-            catch (Exception ex)
+            catch (ParsingException ex)
             {
                 var currentColor = Console.ForegroundColor;
 
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write("Error — ");
+                Console.Write("Parsing Error — ");
                 Console.ForegroundColor = currentColor;
                 Console.Write(ex.Message);
                 Console.Write("\nPress anything to exit.. ");
                 Console.ReadLine();
                 System.Environment.Exit(1);
-                throw;
+                return null;
+            }
+            catch (RuntimeException ex)
+            {
+                var currentColor = Console.ForegroundColor;
+
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write("Runtime Error — ");
+                Console.ForegroundColor = currentColor;
+                Console.Write(ex.Message);
+                Console.Write("\nPress anything to exit.. ");
+                Console.ReadLine();
+                System.Environment.Exit(1);
+                return null;
             }
         }
     }

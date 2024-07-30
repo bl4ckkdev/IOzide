@@ -49,7 +49,7 @@ public class Statements
         
         var cond = Interpreter.Evaluate(statement.Conditions, environment);
         
-        if (cond.Type != Values.ValueType.Boolean) throw new Exception("Expected boolean inside of if statement.");
+        if (cond.Type != Values.ValueType.Boolean) throw new ParsingException("Expected boolean inside of if statement.");
         else if (cond.Type == Values.ValueType.Boolean && Convert.ToBoolean(cond.Value))
         {
             Environment scope = new Environment(statement.DeclarationEnvironment);
@@ -74,7 +74,7 @@ public class Statements
         };
         
         var cond = Interpreter.Evaluate(statement.Conditions, environment);
-        if (cond.Type != Values.ValueType.Boolean) throw new Exception("Expected boolean inside of while statement.");
+        if (cond.Type != Values.ValueType.Boolean) throw new ParsingException("Expected boolean inside of while statement.");
         else
         {
             while (Convert.ToBoolean(Interpreter.Evaluate(statement.Conditions, environment).Value))
@@ -103,7 +103,7 @@ public class Statements
         
         Values.RuntimeValue cond = Interpreter.Evaluate(statement.Arg2, environment); // for (let i = 0; i < 5; i = i + 1) { }
         
-        if (cond.Type != Values.ValueType.Boolean) throw new Exception("Expected logical expression or boolean inside second argument of for loop.");
+        if (cond.Type != Values.ValueType.Boolean) throw new ParsingException("Expected logical expression or boolean inside second argument of for loop.");
         else
         {
             while (Convert.ToBoolean(Interpreter.Evaluate(statement.Arg2, environment).Value))

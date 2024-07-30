@@ -97,7 +97,7 @@ public class Expressions
                  }
                  catch
                  {
-                     throw new Exception("Expected number in right hand side of multiplicative string concatenation.");
+                     throw new ParsingException("Expected number in right hand side of multiplicative string concatenation.");
                  }
                  break;
              default: return new Values.StringValue { Value = null, Type = Values.ValueType.String};
@@ -115,6 +115,8 @@ public class Expressions
          Values.RuntimeValue left = Interpreter.Evaluate(binop.Left, environment);
          Values.RuntimeValue right = Interpreter.Evaluate(binop.Right, environment);
 
+         if (left.Type != right.Type) throw new ParsingException($"Can't apply operator {binop.Operator} to {left.Type} and {right.Type}");
+         
          if (binop.Operator == "==" || binop.Operator == "!=")
          {
              return EvaluateComparisonExpression(left, right, binop.Operator);
@@ -167,7 +169,7 @@ public class Expressions
      public static Values.RuntimeValue EvaluateAssignment(AST.AssignmentExpression node, Environment environment)
      {
          if (node.Assignee.Kind != AST.NodeType.Identifier)
-             throw new Exception($"Invalid left side inside assignment expression.");
+             throw new ParsingException($"Invalid left side inside assignment expression.");
          
          string name = (node.Assignee as AST.Identifier).Symbol;
          return environment.AssignVariable(name, Interpreter.Evaluate(node.Operator == "=" ? node.Value : new AST.BinaryExpression
@@ -235,6 +237,6 @@ public class Expressions
              return result;
          }
          
-         throw new Exception("Invalid Function.");
+         throw new ParsingException("Invalid Function.");
      }
 }

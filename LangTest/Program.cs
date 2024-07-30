@@ -18,7 +18,6 @@ namespace LangTest
         public static void Main(string[] args)
         {
             // TODO: Add to PATH and run argument
-            
             Console.Write(
                 $"— IOzide {Version} ALPHA (AIO) ———————————————————————————\n\n" +
                 "Enter Repl: [1]\n" +
