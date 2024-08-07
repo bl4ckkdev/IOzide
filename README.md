@@ -1,9 +1,9 @@
 ![alt text][logo] 
-A programming language made with C#. The name is inspired by an old program by IBM called "IOzone".
+A programming language made in C#. The name is inspired by an old program by IBM called "IOzone".
 
 > ⚠️ This language is in very early stages. While completely functional, it is missing a lot of features and it isn't stable.
 ## Features
-- [x] Supported data types: Float, String, Boolean, Structs & Functions
+- [x] Supported data types: Float, String, Boolean, Structs(ish) & Functions
 - [x] Print & input functions, as well as multiple other native functions
 - [x] Custom functions with nesting support
 - [x] ~~Compiler~~, Interpreter & REPL
